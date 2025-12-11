@@ -1642,7 +1642,7 @@ body:hover .cursor-glow {
     }
     
     /* Locations tablet */
-    .locations-map {
+.locations-map {
         height: 400px;
     }
     
@@ -1662,22 +1662,68 @@ body:hover .cursor-glow {
     }
     
     .section {
-        padding: var(--space-16) 0;
+        padding: var(--space-12) 0;
+    }
+    
+    .hero {
+        min-height: auto;
     }
     
     .hero-content {
-        padding: var(--space-12) var(--space-4);
+        padding: var(--space-16) var(--space-4) var(--space-4);
+        padding-top: 100px;
+    }
+    
+    .hero-badge {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.7rem;
+        margin-bottom: var(--space-3);
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+        line-height: 1.2;
+        margin-bottom: var(--space-2);
+    }
+    
+    .hero-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: var(--space-4);
+    }
+    
+    .hero-buttons {
+        gap: var(--space-3);
+        margin-bottom: var(--space-5);
+    }
+    
+    .hero-buttons .btn-primary,
+    .hero-buttons .btn-secondary {
+        padding: var(--space-3) var(--space-6);
+        font-size: 0.9rem;
     }
     
     .hero-stats-bar {
-        flex-direction: column;
-        gap: var(--space-4);
-        padding: var(--space-5);
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
+        padding: var(--space-4);
     }
     
     .hero-stat-divider {
-        width: 60px;
-        height: 1px;
+        display: none;
+    }
+    
+    .hero-stat {
+        padding: var(--space-2);
+    }
+    
+    .hero-stat-number {
+        font-size: 1.3rem;
+    }
+    
+    .hero-stat-label {
+        font-size: 0.6rem;
+        letter-spacing: 0.5px;
     }
     
     .scroll-indicator {
@@ -1870,11 +1916,35 @@ body:hover .cursor-glow {
 
 @media (max-width: 480px) {
     .container {
-        padding: 0 var(--space-4);
+        padding: 0 var(--space-3);
+    }
+    
+    .hero-content {
+        padding-top: 90px;
+        padding-left: var(--space-3);
+        padding-right: var(--space-3);
+        padding-bottom: var(--space-3);
     }
     
     .hero-title {
-        font-size: 2rem;
+        font-size: 1.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .hero-stats-bar {
+        gap: var(--space-2);
+        padding: var(--space-3);
+    }
+    
+    .hero-stat-number {
+        font-size: 1.1rem;
+    }
+    
+    .hero-stat-label {
+        font-size: 0.55rem;
     }
     
     .hero-buttons {
@@ -1884,8 +1954,14 @@ body:hover .cursor-glow {
     
     .btn-primary, .btn-secondary {
         width: 100%;
-        max-width: 280px;
+        max-width: 260px;
         justify-content: center;
+        padding: var(--space-3) var(--space-5);
+        font-size: 0.85rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
     }
     
     .involvement-grid {
@@ -1904,6 +1980,15 @@ body:hover .cursor-glow {
     
     .team-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .team-card {
+        padding: var(--space-6);
+    }
+    
+    .team-avatar {
+        width: 100px;
+        height: 100px;
     }
 }
 
