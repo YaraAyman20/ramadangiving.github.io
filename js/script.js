@@ -30,29 +30,44 @@ function initNavigation() {
 
     // Toggle Mobile Menu
     hamburger?.addEventListener('click', () => {
+        const isOpening = !navLinks.classList.contains('active');
         navLinks.classList.toggle('active');
         hamburger.classList.toggle('active');
 
-        // Animate Links with stagger effect
-        navItems.forEach((link, index) => {
-            if (link.style.animation) {
-                link.style.animation = '';
-            } else {
-                link.style.animation = `navLinkFade 0.5s ease forwards ${index / 7 + 0.2}s`;
-            }
-        });
+        if (!isOpening) {
+            // Closing menu - reset dropdowns
+            const allDropdownMenus = document.querySelectorAll('.dropdown-menu');
+            const allDropdownTriggers = document.querySelectorAll('.dropdown-trigger');
+            allDropdownMenus.forEach(menu => menu.classList.remove('show'));
+            allDropdownTriggers.forEach(trigger => {
+                trigger.classList.remove('active');
+                trigger.classList.remove('open');
+            });
+        }
     });
 
-    // Close menu when clicking a link
+    // Close menu when clicking a link (but not dropdown triggers)
     navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            if (navLinks.classList.contains('active')) {
-                navLinks.classList.remove('active');
-                hamburger.classList.remove('active');
-                navItems.forEach(link => {
-                    link.style.animation = '';
-                });
-            }
+        const links = item.querySelectorAll('a:not(.dropdown-trigger)');
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                // Don't close if it's a dropdown item click
+                const isDropdownTrigger = link.classList.contains('dropdown-trigger');
+                
+                if (!isDropdownTrigger && navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                    hamburger.classList.remove('active');
+                    
+                    // Reset all dropdowns
+                    const allDropdownMenus = document.querySelectorAll('.dropdown-menu');
+                    const allDropdownTriggers = document.querySelectorAll('.dropdown-trigger');
+                    allDropdownMenus.forEach(menu => menu.classList.remove('show'));
+                    allDropdownTriggers.forEach(trigger => {
+                        trigger.classList.remove('active');
+                        trigger.classList.remove('open');
+                    });
+                }
+            });
         });
     });
 
@@ -99,6 +114,7 @@ function initDropdownNavigation() {
         dropdowns.forEach(dropdown => {
             dropdown.querySelector('.dropdown-menu')?.classList.remove('show');
             dropdown.querySelector('.dropdown-trigger')?.classList.remove('active');
+            dropdown.querySelector('.dropdown-trigger')?.classList.remove('open');
         });
         hideBackdrop();
     }
@@ -143,16 +159,27 @@ function initDropdownNavigation() {
         trigger.addEventListener('click', (e) => {
             if (window.innerWidth <= 768) {
                 e.preventDefault();
+                e.stopPropagation();
                 const isOpen = menu.classList.contains('show');
                 
-                // Close all first
-                closeAllDropdowns();
+                // Close other dropdowns first
+                dropdowns.forEach(other => {
+                    if (other !== dropdown) {
+                        other.querySelector('.dropdown-menu')?.classList.remove('show');
+                        other.querySelector('.dropdown-trigger')?.classList.remove('active');
+                        other.querySelector('.dropdown-trigger')?.classList.remove('open');
+                    }
+                });
                 
                 // Toggle current
                 if (!isOpen) {
                     menu.classList.add('show');
                     trigger.classList.add('active');
-                    showBackdrop();
+                    trigger.classList.add('open');
+                } else {
+                    menu.classList.remove('show');
+                    trigger.classList.remove('active');
+                    trigger.classList.remove('open');
                 }
             }
         });
