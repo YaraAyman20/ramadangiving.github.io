@@ -8,6 +8,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize all components
     initNavigation();
+    initDropdownNavigation();
     initParticles();
     initScrollAnimations();
     initDonationButtons();
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSlideshow();
     initCursorGlow();
     initSmoothScroll();
+    initNewsCarousel();
 });
 
 /**
@@ -66,6 +68,104 @@ function initNavigation() {
         }
 
         lastScroll = currentScroll;
+    });
+}
+
+/**
+ * Dropdown Navigation with Blur Backdrop
+ */
+function initDropdownNavigation() {
+    const dropdowns = document.querySelectorAll('.nav-dropdown');
+
+    if (!dropdowns.length) return;
+
+    // Create backdrop element for blur effect
+    let backdrop = document.querySelector('.dropdown-backdrop');
+    if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.className = 'dropdown-backdrop';
+        document.body.appendChild(backdrop);
+    }
+
+    function showBackdrop() {
+        backdrop.classList.add('show');
+    }
+
+    function hideBackdrop() {
+        backdrop.classList.remove('show');
+    }
+
+    function closeAllDropdowns() {
+        dropdowns.forEach(dropdown => {
+            dropdown.querySelector('.dropdown-menu')?.classList.remove('show');
+            dropdown.querySelector('.dropdown-trigger')?.classList.remove('active');
+        });
+        hideBackdrop();
+    }
+
+    dropdowns.forEach(dropdown => {
+        const trigger = dropdown.querySelector('.dropdown-trigger');
+        const menu = dropdown.querySelector('.dropdown-menu');
+
+        if (!trigger || !menu) return;
+
+        // Desktop: hover behavior
+        dropdown.addEventListener('mouseenter', () => {
+            if (window.innerWidth > 768) {
+                // Close other dropdowns first
+                dropdowns.forEach(other => {
+                    if (other !== dropdown) {
+                        other.querySelector('.dropdown-menu')?.classList.remove('show');
+                        other.querySelector('.dropdown-trigger')?.classList.remove('active');
+                    }
+                });
+                
+                menu.classList.add('show');
+                trigger.classList.add('active');
+                showBackdrop();
+            }
+        });
+
+        dropdown.addEventListener('mouseleave', () => {
+            if (window.innerWidth > 768) {
+                menu.classList.remove('show');
+                trigger.classList.remove('active');
+                
+                // Only hide backdrop if no dropdowns are open
+                const anyOpen = Array.from(dropdowns).some(d => 
+                    d.querySelector('.dropdown-menu')?.classList.contains('show')
+                );
+                if (!anyOpen) hideBackdrop();
+            }
+        });
+
+        // Mobile: click behavior
+        trigger.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                e.preventDefault();
+                const isOpen = menu.classList.contains('show');
+                
+                // Close all first
+                closeAllDropdowns();
+                
+                // Toggle current
+                if (!isOpen) {
+                    menu.classList.add('show');
+                    trigger.classList.add('active');
+                    showBackdrop();
+                }
+            }
+        });
+    });
+
+    // Close dropdowns when clicking backdrop
+    backdrop.addEventListener('click', closeAllDropdowns);
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.nav-dropdown') && !e.target.closest('.dropdown-backdrop')) {
+            closeAllDropdowns();
+        }
     });
 }
 
@@ -668,4 +768,187 @@ function throttle(func, limit) {
             setTimeout(() => inThrottle = false, limit);
         }
     };
+}
+
+/**
+ * News Carousel - Loads posts from blog/posts.json
+ */
+function initNewsCarousel() {
+    const track = document.getElementById('newsCarouselTrack');
+    const prevBtn = document.getElementById('newsPrevBtn');
+    const nextBtn = document.getElementById('newsNextBtn');
+    const pageNumbers = document.getElementById('newsPageNumbers');
+
+    if (!track) return;
+
+    // Load posts from JSON
+    fetch('blog/posts.json')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to load posts.json');
+            return response.json();
+        })
+        .then(data => {
+            setupNewsCarousel(data.posts, track, prevBtn, nextBtn, pageNumbers);
+        })
+        .catch(error => {
+            console.error('Error loading news posts:', error);
+            // Fallback content
+            track.innerHTML = '<div style="padding: 2rem; text-align: center; color: #666;">Unable to load news posts</div>';
+        });
+}
+
+function setupNewsCarousel(posts, track, prevBtn, nextBtn, pageNumbers) {
+    // Take only the latest posts for the carousel
+    const carouselPosts = posts.slice(0, 12);
+    const itemsPerPage = getItemsPerPage();
+    let currentPage = 0;
+    const totalPages = Math.ceil(carouselPosts.length / itemsPerPage);
+
+    // Format date helper
+    function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        const options = { month: 'short', day: '2-digit', year: 'numeric' };
+        return date.toLocaleDateString('en-US', options).toUpperCase().replace(',', '');
+    }
+
+    // Create news cards
+    carouselPosts.forEach(post => {
+        const card = document.createElement('article');
+        card.className = 'news-card';
+        card.dataset.category = post.category;
+        
+        card.innerHTML = `
+            <a href="blog/post.html?article=${post.slug}" class="news-card-link">
+                <div class="news-image">
+                    <img src="${post.image.replace('../', '')}" alt="${post.title}" loading="lazy">
+                </div>
+                <div class="news-content">
+                    <div class="news-meta">
+                        <span class="news-author">${post.author}</span>
+                        <span class="news-divider">-</span>
+                        <time class="news-date">${formatDate(post.date)}</time>
+                    </div>
+                    <h3 class="news-title">${post.title}</h3>
+                    <span class="news-read-more">
+                        Read more
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+        `;
+        
+        track.appendChild(card);
+    });
+
+    // Create page numbers - show only 3 at a time with sliding window
+    function updatePageNumbers() {
+        if (!pageNumbers) return;
+        pageNumbers.innerHTML = '';
+        
+        const itemsPerPage = getItemsPerPage();
+        const totalPages = Math.ceil(carouselPosts.length / itemsPerPage);
+        
+        if (totalPages <= 1) return;
+        
+        // Calculate visible range (max 3 numbers with sliding)
+        let startPage, endPage;
+        
+        if (totalPages <= 3) {
+            // Show all pages if 3 or fewer
+            startPage = 0;
+            endPage = totalPages - 1;
+        } else {
+            // Sliding window logic
+            if (currentPage === 0) {
+                // At the start: show 1, 2, 3
+                startPage = 0;
+                endPage = 2;
+            } else if (currentPage >= totalPages - 1) {
+                // At the end: show last 3
+                startPage = totalPages - 3;
+                endPage = totalPages - 1;
+            } else {
+                // In the middle: show current-1, current, current+1
+                startPage = currentPage - 1;
+                endPage = currentPage + 1;
+            }
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.className = `news-page-num ${i === currentPage ? 'active' : ''}`;
+            pageBtn.textContent = i + 1;
+            pageBtn.addEventListener('click', () => goToPage(i));
+            pageNumbers.appendChild(pageBtn);
+        }
+    }
+
+    // Go to specific page
+    function goToPage(page) {
+        const itemsPerPage = getItemsPerPage();
+        const maxPage = Math.ceil(carouselPosts.length / itemsPerPage) - 1;
+        currentPage = Math.max(0, Math.min(page, maxPage));
+        updateCarousel();
+    }
+
+    // Update carousel position
+    function updateCarousel() {
+        const itemsPerPage = getItemsPerPage();
+        const cardWidth = track.querySelector('.news-card')?.offsetWidth || 0;
+        const gap = parseInt(getComputedStyle(track).gap) || 24;
+        const offset = currentPage * itemsPerPage * (cardWidth + gap);
+        
+        track.style.transform = `translateX(-${offset}px)`;
+        
+        // Update buttons
+        const maxPage = Math.ceil(carouselPosts.length / itemsPerPage) - 1;
+        if (prevBtn) prevBtn.disabled = currentPage === 0;
+        if (nextBtn) nextBtn.disabled = currentPage >= maxPage;
+        
+        // Update page numbers with sliding window
+        updatePageNumbers();
+    }
+
+    // Get items per page based on screen width
+    function getItemsPerPage() {
+        if (window.innerWidth <= 768) return 1;
+        if (window.innerWidth <= 1024) return 2;
+        return 3;
+    }
+
+    // Event listeners
+    prevBtn?.addEventListener('click', () => {
+        if (currentPage > 0) {
+            currentPage--;
+            updateCarousel();
+        }
+    });
+
+    nextBtn?.addEventListener('click', () => {
+        const itemsPerPage = getItemsPerPage();
+        const maxPage = Math.ceil(carouselPosts.length / itemsPerPage) - 1;
+        if (currentPage < maxPage) {
+            currentPage++;
+            updateCarousel();
+        }
+    });
+
+    // Handle resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            const itemsPerPage = getItemsPerPage();
+            const maxPage = Math.ceil(carouselPosts.length / itemsPerPage) - 1;
+            if (currentPage > maxPage) currentPage = maxPage;
+            updatePageNumbers();
+            updateCarousel();
+        }, 200);
+    });
+
+    // Initialize
+    updatePageNumbers();
+    updateCarousel();
 }

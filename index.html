@@ -36,13 +36,68 @@
                 <span class="logo-text">Ramadan Giving</span>
             </a>
             <ul class="nav-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#team">Team</a></li>
-                <li><a href="#impact">Impact</a></li>
-                <li><a href="#gallery">Gallery</a></li>
+                <li class="nav-dropdown">
+                    <a href="#about" class="dropdown-trigger">
+                        About
+                        <svg class="dropdown-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-section">
+                            <span class="dropdown-label">About Us</span>
+                            <a href="#about">Our Mission</a>
+                            <a href="#team">Our Team</a>
+                            <a href="#impact">Our Impact</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-dropdown">
+                    <a href="#" class="dropdown-trigger">
+                        Programs
+                        <svg class="dropdown-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-wide">
+                        <div class="dropdown-section">
+                            <span class="dropdown-label">GTA Programs</span>
+                            <a href="#impact">Food Distribution</a>
+                            <a href="#impact">Winter Kits</a>
+                            <a href="#impact">Children's Camp</a>
+                        </div>
+                        <div class="dropdown-section">
+                            <span class="dropdown-label">Cairo Programs</span>
+                            <a href="#impact">Food Packages</a>
+                            <a href="#impact">Orphan Support</a>
+                            <a href="#impact">Gaza Relief</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-dropdown">
+                    <a href="#" class="dropdown-trigger">
+                        Resources
+                        <svg class="dropdown-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-wide">
+                        <div class="dropdown-section">
+                            <span class="dropdown-label">Resources</span>
+                            <a href="blog/">Blog & News</a>
+                            <a href="#gallery">Photo Gallery</a>
+                            <a href="#locations">Our Locations</a>
+                        </div>
+                        <div class="dropdown-section">
+                            <span class="dropdown-label">Community</span>
+                            <a href="https://www.instagram.com/ramadan.giving/" target="_blank">Instagram</a>
+                            <a href="#get-involved">Volunteer</a>
+                            <a href="#get-involved">Partner With Us</a>
+                        </div>
+                    </div>
+                </li>
                 <li><a href="#get-involved">Get Involved</a></li>
-                <li><a href="#locations">Locations</a></li>
-                <li><a href="https://www.launchgood.com/v4/campaign/ramadan_giving_building_bridges_of_hope" target="_blank" class="btn-primary">Donate</a></li>
+                <li><a href="https://www.launchgood.com/v4/campaign/ramadan_giving_building_bridges_of_hope" target="_blank" class="btn-primary nav-donate-btn">Donate</a></li>
             </ul>
             <div class="hamburger">
                 <span></span>
@@ -198,6 +253,40 @@
                     <h3>Youth Ambassadors</h3>
                     <p>Inspiring the next generation of changemakers.</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="news" class="section news-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Stay Updated</span>
+                <h2 class="section-title">The latest news</h2>
+                <div class="section-line"></div>
+            </div>
+            
+            <!-- News Carousel -->
+            <div class="news-carousel">
+                <div class="news-carousel-track" id="newsCarouselTrack">
+                    <!-- News cards will be loaded dynamically from blog/posts.json -->
+                </div>
+            </div>
+            
+            <!-- Pagination Controls -->
+            <div class="news-carousel-pagination">
+                <button class="news-nav-btn news-prev" id="newsPrevBtn" aria-label="Previous news">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+                <div class="news-page-numbers" id="newsPageNumbers">
+                    <!-- Page numbers generated dynamically -->
+                </div>
+                <button class="news-nav-btn news-next" id="newsNextBtn" aria-label="Next news">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </section>
