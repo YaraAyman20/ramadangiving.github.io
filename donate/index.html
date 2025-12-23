@@ -28,6 +28,9 @@
     <!-- Cursor Glow Effect -->
     <div class="cursor-glow"></div>
     
+    <!-- Confetti Container -->
+    <div class="confetti-container" id="confettiContainer"></div>
+    
     <nav class="navbar">
         <div class="container nav-container">
             <a href="../index.html" class="logo">
@@ -50,14 +53,47 @@
     </nav>
 
     <main class="donate-main">
-        <!-- Hero Section -->
+        <!-- Hero Section - Enhanced -->
         <section class="donate-hero">
             <div class="donate-hero-bg"></div>
             <div class="container">
                 <div class="donate-hero-content">
-                    <span class="donate-hero-badge">🌙 Make an Impact</span>
+                    <span class="donate-hero-badge">Make an Impact Today</span>
                     <h1 class="donate-hero-title">Your Generosity<br><span class="highlight">Changes Lives</span></h1>
-                    <p class="donate-hero-subtitle">Every donation helps us provide food, support, and hope to families in need across Toronto and Cairo.</p>
+                    <p class="donate-hero-subtitle">Every donation helps us provide food, support, and hope to families in need across Toronto and Cairo. Join thousands of donors making a difference.</p>
+                    
+                    <!-- Hero Stats -->
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <span class="hero-stat-number" data-count="15000">0</span>
+                            <span class="hero-stat-label">Families Served</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number" data-count="50000">0</span>
+                            <span class="hero-stat-label">Meals Provided</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number" data-count="952">0</span>
+                            <span class="hero-stat-label">Donors This Year</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Donation Feed -->
+        <section class="live-feed-section">
+            <div class="container">
+                <div class="live-feed-wrapper">
+                    <div class="live-feed-label">
+                        <span class="live-indicator"></span>
+                        <span>Recent Donations</span>
+                    </div>
+                    <div class="live-feed-track">
+                        <div class="live-feed-items" id="liveFeedItems">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -67,80 +103,80 @@
             <div class="container">
                 <div class="goals-header">
                     <h2>Current Campaigns</h2>
-                    <p>Track our progress in real-time</p>
+                    <p>Track our progress in real-time and see the impact of every donation</p>
                 </div>
                 <div class="goals-grid">
                     <!-- Goal 1: Ramadan 2025 -->
-                    <div class="goal-card glass-card">
+                    <div class="goal-card">
                         <div class="goal-icon">🍽️</div>
                         <h3>Ramadan 2025 Campaign</h3>
-                        <p class="goal-description">Providing food packages and hot meals to families during the blessed month.</p>
+                        <p class="goal-description">Providing food packages and hot meals to families during the blessed month of Ramadan.</p>
                         <div class="goal-progress-container">
                             <div class="goal-progress-bar">
-                                <div class="goal-progress-fill" data-progress="78" style="width: 78%"></div>
+                                <div class="goal-progress-fill" data-progress="78" style="width: 0%"></div>
                             </div>
                             <div class="goal-stats">
-                                <span class="goal-raised">$78,500</span>
+                                <span class="goal-raised" data-raised="78500">$0</span>
                                 <span class="goal-target">of $100,000 goal</span>
                             </div>
                         </div>
                         <div class="goal-donors">
                             <div class="donor-avatars">
-                                <span class="donor-avatar">👨</span>
-                                <span class="donor-avatar">👩</span>
-                                <span class="donor-avatar">👨</span>
-                                <span class="donor-avatar">+</span>
+                                <span class="donor-avatar">S</span>
+                                <span class="donor-avatar">A</span>
+                                <span class="donor-avatar">M</span>
+                                <span class="donor-avatar">+281</span>
                             </div>
                             <span class="donor-count">284 donors</span>
                         </div>
                     </div>
 
                     <!-- Goal 2: Gaza Relief -->
-                    <div class="goal-card glass-card featured">
+                    <div class="goal-card featured">
                         <div class="goal-badge">Urgent</div>
                         <div class="goal-icon">🆘</div>
                         <h3>Gaza Emergency Relief</h3>
-                        <p class="goal-description">Emergency aid for displaced families including food, medical supplies, and shelter.</p>
+                        <p class="goal-description">Emergency aid for displaced families including food, medical supplies, and essential shelter.</p>
                         <div class="goal-progress-container">
                             <div class="goal-progress-bar">
-                                <div class="goal-progress-fill urgent" data-progress="62" style="width: 62%"></div>
+                                <div class="goal-progress-fill urgent" data-progress="62" style="width: 0%"></div>
                             </div>
                             <div class="goal-stats">
-                                <span class="goal-raised">$155,000</span>
+                                <span class="goal-raised" data-raised="155000">$0</span>
                                 <span class="goal-target">of $250,000 goal</span>
                             </div>
                         </div>
                         <div class="goal-donors">
                             <div class="donor-avatars">
-                                <span class="donor-avatar">👩</span>
-                                <span class="donor-avatar">👨</span>
-                                <span class="donor-avatar">👩</span>
-                                <span class="donor-avatar">+</span>
+                                <span class="donor-avatar">R</span>
+                                <span class="donor-avatar">K</span>
+                                <span class="donor-avatar">J</span>
+                                <span class="donor-avatar">+509</span>
                             </div>
                             <span class="donor-count">512 donors</span>
                         </div>
                     </div>
 
                     <!-- Goal 3: Children's Camp -->
-                    <div class="goal-card glass-card">
+                    <div class="goal-card">
                         <div class="goal-icon">👧</div>
                         <h3>Children's Summer Camp</h3>
-                        <p class="goal-description">Fun educational camp experiences for underserved children in both communities.</p>
+                        <p class="goal-description">Fun educational camp experiences for underserved children in both Toronto and Cairo communities.</p>
                         <div class="goal-progress-container">
                             <div class="goal-progress-bar">
-                                <div class="goal-progress-fill" data-progress="45" style="width: 45%"></div>
+                                <div class="goal-progress-fill" data-progress="45" style="width: 0%"></div>
                             </div>
                             <div class="goal-stats">
-                                <span class="goal-raised">$22,500</span>
+                                <span class="goal-raised" data-raised="22500">$0</span>
                                 <span class="goal-target">of $50,000 goal</span>
                             </div>
                         </div>
                         <div class="goal-donors">
                             <div class="donor-avatars">
-                                <span class="donor-avatar">👨</span>
-                                <span class="donor-avatar">👩</span>
-                                <span class="donor-avatar">👨</span>
-                                <span class="donor-avatar">+</span>
+                                <span class="donor-avatar">N</span>
+                                <span class="donor-avatar">L</span>
+                                <span class="donor-avatar">T</span>
+                                <span class="donor-avatar">+153</span>
                             </div>
                             <span class="donor-count">156 donors</span>
                         </div>
@@ -150,13 +186,29 @@
         </section>
 
         <!-- Main Donation Form Section -->
-        <section class="donation-form-section">
+        <section class="donation-form-section" id="donateForm">
             <div class="container">
+                <!-- Step Progress Indicator -->
+                <div class="form-steps">
+                    <div class="step-item active" data-step="1">
+                        <span class="step-number">1</span>
+                        <span class="step-label">Choose Cause</span>
+                    </div>
+                    <div class="step-item" data-step="2">
+                        <span class="step-number">2</span>
+                        <span class="step-label">Amount</span>
+                    </div>
+                    <div class="step-item" data-step="3">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Payment</span>
+                    </div>
+                </div>
+
                 <div class="donation-wrapper">
                     <!-- Left: Cause Selection -->
                     <div class="donation-causes">
                         <h2>Choose a Cause</h2>
-                        <p class="causes-subtitle">Select where you'd like your donation to go</p>
+                        <p class="causes-subtitle">Select where you'd like your donation to have the most impact</p>
                         
                         <div class="causes-grid">
                             <label class="cause-card">
@@ -277,7 +329,7 @@
                                 </div>
                                 <div class="custom-amount">
                                     <span class="currency-symbol">$</span>
-                                    <input type="number" id="customAmount" placeholder="Other amount" min="1" step="1">
+                                    <input type="number" id="customAmount" placeholder="Enter custom amount" min="1" step="1">
                                 </div>
                                 <div class="amount-impact" id="amountImpact">
                                     <span class="impact-icon">✨</span>
@@ -345,7 +397,7 @@
                                     Dedicate This Donation <span class="optional">(Optional)</span>
                                 </label>
                                 <div class="dedication-toggle">
-                                    <button type="button" class="dedication-btn" data-dedication="none">No Dedication</button>
+                                    <button type="button" class="dedication-btn active" data-dedication="none">No Dedication</button>
                                     <button type="button" class="dedication-btn" data-dedication="honor">In Honor</button>
                                     <button type="button" class="dedication-btn" data-dedication="memory">In Memory</button>
                                 </div>
@@ -501,7 +553,7 @@
             <div class="container">
                 <div class="external-header">
                     <h2>Other Ways to Donate</h2>
-                    <p>Support us through our partner platforms</p>
+                    <p>Support us through our trusted partner platforms</p>
                 </div>
                 <div class="external-grid">
                     <a href="https://www.launchgood.com/v4/campaign/ramadan_giving_building_bridges_of_hope" target="_blank" class="external-card launchgood">
@@ -509,7 +561,7 @@
                             <span class="external-icon">🚀</span>
                             <span class="external-name">LaunchGood</span>
                         </div>
-                        <p>Join our main campaign and see real-time updates</p>
+                        <p>Join our main campaign and see real-time updates on our progress and impact stories.</p>
                         <span class="external-cta">
                             Donate on LaunchGood
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -524,7 +576,7 @@
                             <span class="external-icon">💚</span>
                             <span class="external-name">GoFundMe</span>
                         </div>
-                        <p>Emergency campaigns and special projects</p>
+                        <p>Emergency campaigns and special projects that need your immediate support.</p>
                         <span class="external-cta">
                             View Campaigns
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -539,7 +591,7 @@
                             <span class="external-icon">💳</span>
                             <span class="external-name">PayPal</span>
                         </div>
-                        <p>Quick and secure payments via PayPal</p>
+                        <p>Quick and secure payments via PayPal for instant processing.</p>
                         <span class="external-cta">
                             Donate via PayPal
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -560,27 +612,40 @@
                     <div class="trust-item">
                         <span class="trust-icon">🔒</span>
                         <h4>Secure Donations</h4>
-                        <p>256-bit SSL encryption protects all transactions</p>
+                        <p>256-bit SSL encryption protects all your transactions and personal data.</p>
                     </div>
                     <div class="trust-item">
                         <span class="trust-icon">📋</span>
                         <h4>Tax Receipts</h4>
-                        <p>Receive official receipts for all eligible donations</p>
+                        <p>Receive official tax receipts for all eligible donations via email.</p>
                     </div>
                     <div class="trust-item">
                         <span class="trust-icon">💯</span>
                         <h4>100% Transparent</h4>
-                        <p>Track exactly how your donation makes an impact</p>
+                        <p>Track exactly how your donation makes an impact in our communities.</p>
                     </div>
                     <div class="trust-item">
                         <span class="trust-icon">🤝</span>
                         <h4>Community Driven</h4>
-                        <p>All volunteers, 100% of donations go to programs</p>
+                        <p>All volunteer-run, 100% of donations go directly to programs.</p>
                     </div>
                 </div>
             </div>
         </section>
     </main>
+
+    <!-- Floating Summary (Mobile) -->
+    <div class="floating-summary" id="floatingSummary">
+        <div class="floating-summary-content">
+            <div>
+                <div class="floating-summary-amount" id="floatingAmount">$100.00</div>
+                <div class="floating-summary-cause" id="floatingCause">Where Needed Most</div>
+            </div>
+            <button class="floating-donate-btn" onclick="document.getElementById('donateSubmitBtn').click()">
+                Donate Now
+            </button>
+        </div>
+    </div>
 
     <footer class="footer">
         <div class="footer-pattern"></div>
@@ -638,4 +703,3 @@
 </body>
 
 </html>
-

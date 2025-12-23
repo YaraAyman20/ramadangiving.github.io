@@ -1,65 +1,25 @@
 /**
  * =============================================
- * RAMADAN GIVING - STRIPE DONATION INTEGRATION
- * Complete payment system with Apple Pay, Google Pay, and Card payments
+ * RAMADAN GIVING - ENHANCED DONATION SYSTEM
+ * Complete payment system with beautiful UX
  * =============================================
  */
 
 // ============================================
 // STRIPE CONFIGURATION
-// Replace with your actual Stripe publishable key
 // ============================================
 const STRIPE_CONFIG = {
-    // 🔑 IMPORTANT: Replace this with your Stripe publishable key
-    // Get it from: https://dashboard.stripe.com/apikeys
     publishableKey: 'pk_test_51ShcRc80Q9STyDY5BuJxRa1ncMerEoj0UPtOcsEqPBauBsPZ46w7ScFqtNICQPecW123uvLPL6wsSDPn8QkEL8Ea006NgSGHHM',
-    
-    // Your organization details for Apple Pay / Google Pay
     organizationName: 'Ramadan Giving',
-    country: 'CA', // Canada
+    country: 'CA',
     currency: 'cad',
-    
-    // Optional: Your backend API endpoint for creating payment intents
-    // If you have a serverless function, put the URL here
-    // Leave null to use Stripe Checkout (recommended for static sites)
     apiEndpoint: null,
-    
-    // Stripe Checkout success/cancel URLs
     successUrl: window.location.origin + '/donate/success.html',
     cancelUrl: window.location.origin + '/donate/',
-    
-    // Pre-configured price IDs from your Stripe Dashboard
-    // Create these in Stripe Dashboard > Products
-    // For one-time donations, use "one_time" pricing
-    // For subscriptions, use "recurring" pricing
     priceIds: {
-        // One-time donation price IDs (create in Stripe Dashboard)
-        oneTime: {
-            25: null,  // Set to your Stripe Price ID, e.g., 'price_1ABC123...'
-            50: null,
-            100: null,
-            250: null,
-            500: null,
-            1000: null
-        },
-        // Weekly subscription price IDs
-        weekly: {
-            25: null,
-            50: null,
-            100: null,
-            250: null,
-            500: null,
-            1000: null
-        },
-        // Monthly subscription price IDs
-        monthly: {
-            25: null,
-            50: null,
-            100: null,
-            250: null,
-            500: null,
-            1000: null
-        }
+        oneTime: { 25: null, 50: null, 100: null, 250: null, 500: null, 1000: null },
+        weekly: { 25: null, 50: null, 100: null, 250: null, 500: null, 1000: null },
+        monthly: { 25: null, 50: null, 100: null, 250: null, 500: null, 1000: null }
     }
 };
 
@@ -86,7 +46,6 @@ const donationState = {
     }
 };
 
-// Cause names for metadata
 const causeNames = {
     general: 'Where Needed Most',
     food: 'Food Programs',
@@ -96,15 +55,28 @@ const causeNames = {
     camp: "Children's Camp"
 };
 
-// Impact messages
 const impactMessages = {
-    25: '$25 can provide hot meals for 5 people',
-    50: '$50 can provide a winter kit for a family',
-    100: '$100 can provide food packages for 2 families for a week',
-    250: '$250 can support a child at our camp program',
-    500: '$500 can provide food for 10 families during Ramadan',
-    1000: '$1,000 can sponsor emergency relief for displaced families'
+    25: '$25 provides hot meals for 5 people in need',
+    50: '$50 provides a complete winter kit for a family',
+    100: '$100 provides food packages for 2 families for a week',
+    250: '$250 sponsors a child at our summer camp program',
+    500: '$500 feeds 10 families during the entire month of Ramadan',
+    1000: '$1,000 provides emergency relief for displaced families'
 };
+
+// Sample donor names for the live feed
+const sampleDonors = [
+    { name: 'Sarah M.', amount: 100, time: '2 min ago', initial: 'S' },
+    { name: 'Anonymous', amount: 250, time: '5 min ago', initial: '?' },
+    { name: 'Ahmed K.', amount: 50, time: '8 min ago', initial: 'A' },
+    { name: 'Maria L.', amount: 500, time: '12 min ago', initial: 'M' },
+    { name: 'John D.', amount: 100, time: '15 min ago', initial: 'J' },
+    { name: 'Fatima R.', amount: 1000, time: '20 min ago', initial: 'F' },
+    { name: 'Anonymous', amount: 75, time: '25 min ago', initial: '?' },
+    { name: 'Omar S.', amount: 200, time: '30 min ago', initial: 'O' },
+    { name: 'Lisa T.', amount: 150, time: '35 min ago', initial: 'L' },
+    { name: 'Hassan A.', amount: 300, time: '40 min ago', initial: 'H' }
+];
 
 // ============================================
 // INITIALIZATION
@@ -113,38 +85,30 @@ document.addEventListener('DOMContentLoaded', () => {
     initStripe();
     initDonationForm();
     initGoalProgressAnimations();
+    initLiveDonationFeed();
+    initHeroStatsAnimation();
+    initFloatingSummary();
+    initStepIndicator();
+    initSmoothScrollToForm();
 });
 
 /**
  * Initialize Stripe
  */
 function initStripe() {
-    // Check if Stripe key is configured
     if (STRIPE_CONFIG.publishableKey === 'pk_test_YOUR_PUBLISHABLE_KEY_HERE') {
-        console.warn('⚠️ Stripe not configured! Please add your publishable key to STRIPE_CONFIG.');
+        console.warn('⚠️ Stripe not configured! Please add your publishable key.');
         showStripeConfigWarning();
         return;
     }
 
     try {
-        // Initialize Stripe
         stripe = Stripe(STRIPE_CONFIG.publishableKey);
-        
-        // Initialize Stripe Elements
         elements = stripe.elements({
-            fonts: [
-                {
-                    cssSrc: 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap'
-                }
-            ]
+            fonts: [{ cssSrc: 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap' }]
         });
-
-        // Create and mount Card Element
         createCardElement();
-        
-        // Create Payment Request Button (Apple Pay / Google Pay)
         createPaymentRequestButton();
-        
         console.log('✅ Stripe initialized successfully');
     } catch (error) {
         console.error('Failed to initialize Stripe:', error);
@@ -153,7 +117,7 @@ function initStripe() {
 }
 
 /**
- * Show warning when Stripe is not configured
+ * Show Stripe config warning
  */
 function showStripeConfigWarning() {
     const cardDetails = document.getElementById('cardDetails');
@@ -166,9 +130,8 @@ function showStripeConfigWarning() {
                 <ol>
                     <li>Create a Stripe account at <a href="https://stripe.com" target="_blank">stripe.com</a></li>
                     <li>Get your publishable key from the <a href="https://dashboard.stripe.com/apikeys" target="_blank">API keys page</a></li>
-                    <li>Replace <code>pk_test_YOUR_PUBLISHABLE_KEY_HERE</code> with your key</li>
+                    <li>Replace the placeholder with your key</li>
                 </ol>
-                <p class="warning-note">For testing, use a key starting with <code>pk_test_</code></p>
             </div>
         `;
     }
@@ -181,16 +144,13 @@ function createCardElement() {
     const cardElementContainer = document.getElementById('card-element');
     if (!cardElementContainer || !elements) return;
 
-    // Style the card element to match the site design
     const style = {
         base: {
             fontFamily: '"DM Sans", -apple-system, BlinkMacSystemFont, sans-serif',
             fontSize: '16px',
             fontWeight: '500',
             color: '#1A1A18',
-            '::placeholder': {
-                color: '#737370'
-            },
+            '::placeholder': { color: '#737370' },
             iconColor: '#2D6E7A'
         },
         invalid: {
@@ -199,16 +159,9 @@ function createCardElement() {
         }
     };
 
-    // Create the card element
-    cardElement = elements.create('card', {
-        style,
-        hidePostalCode: false
-    });
-
-    // Mount to the container
+    cardElement = elements.create('card', { style, hidePostalCode: false });
     cardElement.mount('#card-element');
 
-    // Handle errors
     cardElement.on('change', (event) => {
         const errorElement = document.getElementById('card-errors');
         if (errorElement) {
@@ -216,14 +169,8 @@ function createCardElement() {
         }
     });
 
-    // Add focus styling
-    cardElement.on('focus', () => {
-        cardElementContainer.classList.add('focused');
-    });
-
-    cardElement.on('blur', () => {
-        cardElementContainer.classList.remove('focused');
-    });
+    cardElement.on('focus', () => cardElementContainer.classList.add('focused'));
+    cardElement.on('blur', () => cardElementContainer.classList.remove('focused'));
 }
 
 /**
@@ -232,56 +179,41 @@ function createCardElement() {
 function createPaymentRequestButton() {
     if (!stripe) return;
 
-    // Create payment request
     paymentRequest = stripe.paymentRequest({
         country: STRIPE_CONFIG.country,
         currency: STRIPE_CONFIG.currency,
         total: {
             label: `Donation to ${STRIPE_CONFIG.organizationName}`,
-            amount: donationState.amount * 100 // Amount in cents
+            amount: donationState.amount * 100
         },
         requestPayerName: true,
         requestPayerEmail: true
     });
 
-    // Check if Apple Pay / Google Pay is available
     paymentRequest.canMakePayment().then((result) => {
         if (result) {
-            // Show the wallet payment group
             const walletGroup = document.getElementById('walletPaymentGroup');
-            if (walletGroup) {
-                walletGroup.style.display = 'block';
-            }
+            if (walletGroup) walletGroup.style.display = 'block';
 
-            // Create and mount the payment request button
             const prButton = elements.create('paymentRequestButton', {
                 paymentRequest,
                 style: {
                     paymentRequestButton: {
                         type: 'donate',
                         theme: 'dark',
-                        height: '48px'
+                        height: '52px'
                     }
                 }
             });
-
             prButton.mount('#payment-request-button');
-
             console.log('✅ Apple Pay / Google Pay available:', result);
-        } else {
-            console.log('ℹ️ Apple Pay / Google Pay not available');
         }
     });
 
-    // Handle payment request submission
     paymentRequest.on('paymentmethod', async (event) => {
         try {
             showNotification('Processing your payment...', 'info');
-            
-            // For static sites, redirect to Stripe Checkout
-            // The payment method from Apple/Google Pay will be used
             await redirectToStripeCheckout();
-            
             event.complete('success');
         } catch (error) {
             console.error('Payment failed:', error);
@@ -292,7 +224,7 @@ function createPaymentRequestButton() {
 }
 
 /**
- * Update Payment Request amount when donation amount changes
+ * Update Payment Request amount
  */
 function updatePaymentRequestAmount() {
     if (paymentRequest) {
@@ -306,11 +238,208 @@ function updatePaymentRequestAmount() {
 }
 
 // ============================================
+// LIVE DONATION FEED
+// ============================================
+
+function initLiveDonationFeed() {
+    const feedContainer = document.getElementById('liveFeedItems');
+    if (!feedContainer) return;
+
+    // Create duplicate items for seamless scrolling
+    const items = [...sampleDonors, ...sampleDonors];
+    
+    feedContainer.innerHTML = items.map(donor => `
+        <div class="feed-item">
+            <div class="feed-avatar">${donor.initial}</div>
+            <span class="feed-text">
+                <strong>${donor.name}</strong> donated <strong>$${donor.amount}</strong>
+            </span>
+            <span class="feed-time">${donor.time}</span>
+        </div>
+    `).join('');
+
+    // Simulate new donations periodically
+    setInterval(() => {
+        simulateNewDonation();
+    }, 15000);
+}
+
+function simulateNewDonation() {
+    const amounts = [25, 50, 75, 100, 150, 200, 250, 500];
+    const names = ['Sarah', 'Ahmed', 'Maria', 'John', 'Fatima', 'Omar', 'Lisa', 'Hassan', 'Anonymous'];
+    
+    const name = names[Math.floor(Math.random() * names.length)];
+    const amount = amounts[Math.floor(Math.random() * amounts.length)];
+    
+    // Show notification for new donation
+    showDonationNotification(name, amount);
+}
+
+function showDonationNotification(name, amount) {
+    const notification = document.createElement('div');
+    notification.className = 'donation-toast';
+    notification.innerHTML = `
+        <div class="toast-icon">🎉</div>
+        <div class="toast-content">
+            <strong>${name}</strong> just donated <strong>$${amount}</strong>
+        </div>
+    `;
+    
+    addToastStyles();
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 4000);
+}
+
+// ============================================
+// HERO STATS ANIMATION
+// ============================================
+
+function initHeroStatsAnimation() {
+    const stats = document.querySelectorAll('.hero-stat-number');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = entry.target;
+                const endValue = parseInt(target.dataset.count);
+                animateCounter(target, 0, endValue, 2000);
+                observer.unobserve(target);
+            }
+        });
+    }, { threshold: 0.5 });
+    
+    stats.forEach(stat => observer.observe(stat));
+}
+
+function animateCounter(element, start, end, duration) {
+    const range = end - start;
+    const startTime = performance.now();
+    
+    function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const current = Math.floor(start + (range * easeOutQuart));
+        
+        element.textContent = current.toLocaleString();
+        
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        }
+    }
+    
+    requestAnimationFrame(update);
+}
+
+// ============================================
+// FLOATING SUMMARY (MOBILE)
+// ============================================
+
+function initFloatingSummary() {
+    const floatingSummary = document.getElementById('floatingSummary');
+    const donationForm = document.querySelector('.donation-form-section');
+    
+    if (!floatingSummary || !donationForm) return;
+    
+    // Only show on mobile
+    if (window.innerWidth > 1024) return;
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                floatingSummary.classList.add('visible');
+            } else {
+                floatingSummary.classList.remove('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    observer.observe(donationForm);
+}
+
+function updateFloatingSummary() {
+    const floatingAmount = document.getElementById('floatingAmount');
+    const floatingCause = document.getElementById('floatingCause');
+    
+    if (floatingAmount) {
+        floatingAmount.textContent = formatCurrency(donationState.amount);
+    }
+    if (floatingCause) {
+        floatingCause.textContent = causeNames[donationState.cause];
+    }
+}
+
+// ============================================
+// STEP INDICATOR
+// ============================================
+
+function initStepIndicator() {
+    const steps = document.querySelectorAll('.step-item');
+    const causeInputs = document.querySelectorAll('input[name="cause"]');
+    const amountBtns = document.querySelectorAll('.amount-btn');
+    const customAmount = document.getElementById('customAmount');
+    const paymentBtns = document.querySelectorAll('.payment-btn');
+    
+    // Update step based on user interaction
+    function updateStep(step) {
+        steps.forEach((s, i) => {
+            s.classList.remove('active', 'completed');
+            if (i + 1 < step) {
+                s.classList.add('completed');
+            } else if (i + 1 === step) {
+                s.classList.add('active');
+            }
+        });
+    }
+    
+    causeInputs.forEach(input => {
+        input.addEventListener('change', () => updateStep(2));
+    });
+    
+    amountBtns.forEach(btn => {
+        btn.addEventListener('click', () => updateStep(3));
+    });
+    
+    if (customAmount) {
+        customAmount.addEventListener('focus', () => updateStep(3));
+    }
+    
+    paymentBtns.forEach(btn => {
+        btn.addEventListener('click', () => updateStep(3));
+    });
+}
+
+// ============================================
+// SMOOTH SCROLL TO FORM
+// ============================================
+
+function initSmoothScrollToForm() {
+    // If URL has hash #donateForm, scroll to it smoothly
+    if (window.location.hash === '#donateForm') {
+        setTimeout(() => {
+            const form = document.getElementById('donateForm');
+            if (form) {
+                form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 500);
+    }
+}
+
+// ============================================
 // DONATION FORM HANDLING
 // ============================================
 
 function initDonationForm() {
-    // DOM Elements
     const elements = {
         frequencyBtns: document.querySelectorAll('.frequency-btn'),
         recurringNote: document.getElementById('recurringNote'),
@@ -356,7 +485,7 @@ function initDonationForm() {
         });
     });
 
-    // Amount Selection
+    // Amount Selection with animation
     elements.amountBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             elements.amountBtns.forEach(b => b.classList.remove('active'));
@@ -367,8 +496,12 @@ function initDonationForm() {
                 elements.customAmountInput.value = '';
             }
             
+            // Add ripple effect
+            addRippleEffect(btn);
+            
             updateSummary(elements);
             updatePaymentRequestAmount();
+            updateFloatingSummary();
         });
     });
 
@@ -381,6 +514,7 @@ function initDonationForm() {
                 donationState.amount = value;
                 updateSummary(elements);
                 updatePaymentRequestAmount();
+                updateFloatingSummary();
             }
         });
 
@@ -394,6 +528,7 @@ function initDonationForm() {
         input.addEventListener('change', () => {
             donationState.cause = input.value;
             updateSummary(elements);
+            updateFloatingSummary();
         });
     });
 
@@ -403,8 +538,11 @@ function initDonationForm() {
             donationState.donorType = input.value;
             
             if (elements.donorDetails) {
-                elements.donorDetails.style.display = 
-                    donationState.donorType === 'anonymous' ? 'none' : 'block';
+                if (donationState.donorType === 'anonymous') {
+                    elements.donorDetails.style.display = 'none';
+                } else {
+                    elements.donorDetails.style.display = 'block';
+                }
             }
         });
     });
@@ -426,7 +564,6 @@ function initDonationForm() {
     // Payment Method Selection
     function setPaymentMethod(method) {
         donationState.paymentMethod = method;
-        
         document.querySelectorAll('.payment-btn').forEach(b => b.classList.remove('active'));
         
         if (elements.cardDetails) elements.cardDetails.style.display = 'none';
@@ -452,8 +589,18 @@ function initDonationForm() {
         });
     }
 
-    // Initialize
     updateSummary(elements);
+}
+
+/**
+ * Add ripple effect to button
+ */
+function addRippleEffect(button) {
+    const ripple = document.createElement('span');
+    ripple.className = 'btn-ripple';
+    button.appendChild(ripple);
+    
+    setTimeout(() => ripple.remove(), 600);
 }
 
 /**
@@ -462,15 +609,9 @@ function initDonationForm() {
 function updateSummary(elements) {
     const formattedAmount = formatCurrency(donationState.amount);
     
-    if (elements.summaryAmount) {
-        elements.summaryAmount.textContent = formattedAmount;
-    }
-    if (elements.summaryTotal) {
-        elements.summaryTotal.textContent = formattedAmount;
-    }
-    if (elements.submitBtnAmount) {
-        elements.submitBtnAmount.textContent = formattedAmount;
-    }
+    if (elements.summaryAmount) elements.summaryAmount.textContent = formattedAmount;
+    if (elements.summaryTotal) elements.summaryTotal.textContent = formattedAmount;
+    if (elements.submitBtnAmount) elements.submitBtnAmount.textContent = formattedAmount;
     
     if (elements.summaryFrequencyLine) {
         if (donationState.frequency !== 'one-time') {
@@ -485,7 +626,7 @@ function updateSummary(elements) {
         elements.summaryCause.textContent = causeNames[donationState.cause] || 'Where Needed Most';
     }
     
-    // Update impact message
+    // Update impact message with animation
     const impactText = elements.amountImpact?.querySelector('.impact-text');
     if (impactText) {
         let message = impactMessages[100];
@@ -498,10 +639,15 @@ function updateSummary(elements) {
         }
         
         if (donationState.amount >= 2000) {
-            message = `$${donationState.amount.toLocaleString()} can make an extraordinary impact`;
+            message = `$${donationState.amount.toLocaleString()} will make an extraordinary impact on countless lives`;
         }
         
-        impactText.textContent = message;
+        // Animate the text change
+        impactText.style.opacity = '0';
+        setTimeout(() => {
+            impactText.textContent = message;
+            impactText.style.opacity = '1';
+        }, 150);
     }
 }
 
@@ -509,58 +655,43 @@ function updateSummary(elements) {
 // PAYMENT PROCESSING
 // ============================================
 
-/**
- * Handle Donation Submission
- */
 async function handleDonationSubmit() {
-    // Validate form
-    if (!validateDonationForm()) {
-        return;
-    }
+    if (!validateDonationForm()) return;
 
-    // Get donor info
     collectDonorInfo();
 
-    // Show loading state
     const submitBtn = document.getElementById('donateSubmitBtn');
-    const originalContent = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<span class="btn-text">Processing...</span>';
+    submitBtn.classList.add('loading');
     submitBtn.disabled = true;
 
     try {
         if (donationState.paymentMethod === 'bank') {
             showBankTransferConfirmation();
-            submitBtn.innerHTML = originalContent;
+            submitBtn.classList.remove('loading');
             submitBtn.disabled = false;
             return;
         }
 
-        // Process with Stripe
         await redirectToStripeCheckout();
         
     } catch (error) {
         console.error('Payment error:', error);
         showNotification(error.message || 'Payment failed. Please try again.', 'error');
-        submitBtn.innerHTML = originalContent;
+        submitBtn.classList.remove('loading');
         submitBtn.disabled = false;
     }
 }
 
-/**
- * Redirect to Stripe Checkout
- */
 async function redirectToStripeCheckout() {
     if (!stripe) {
         throw new Error('Stripe not initialized. Please configure your API key.');
     }
 
-    // Determine the mode based on frequency
     const isSubscription = donationState.frequency !== 'one-time';
     
-    // Build the checkout session configuration
     const checkoutConfig = {
         mode: isSubscription ? 'subscription' : 'payment',
-        successUrl: STRIPE_CONFIG.successUrl + '?session_id={CHECKOUT_SESSION_ID}',
+        successUrl: STRIPE_CONFIG.successUrl + '?session_id={CHECKOUT_SESSION_ID}&amount=' + donationState.amount,
         cancelUrl: STRIPE_CONFIG.cancelUrl,
         clientReferenceId: generateReferenceId(),
         customerEmail: donationState.donorInfo.email || undefined,
@@ -573,47 +704,25 @@ async function redirectToStripeCheckout() {
         }
     };
 
-    // Try to use pre-configured price IDs
     const priceId = getPriceId();
     
     if (priceId) {
-        // Use pre-configured price from Stripe Dashboard
-        checkoutConfig.lineItems = [{
-            price: priceId,
-            quantity: 1
-        }];
+        checkoutConfig.lineItems = [{ price: priceId, quantity: 1 }];
     } else {
-        // Use dynamic pricing (requires backend or Checkout with price_data)
-        // For static sites without backend, we'll show instructions
         showCheckoutInstructions();
         return;
     }
 
-    // Redirect to Stripe Checkout
     const { error } = await stripe.redirectToCheckout(checkoutConfig);
-    
-    if (error) {
-        throw new Error(error.message);
-    }
+    if (error) throw new Error(error.message);
 }
 
-/**
- * Get pre-configured price ID
- */
 function getPriceId() {
     const frequencyKey = donationState.frequency === 'one-time' ? 'oneTime' : donationState.frequency;
     const prices = STRIPE_CONFIG.priceIds[frequencyKey];
-    
-    if (prices && prices[donationState.amount]) {
-        return prices[donationState.amount];
-    }
-    
-    return null;
+    return prices?.[donationState.amount] || null;
 }
 
-/**
- * Show checkout instructions when price IDs are not configured
- */
 function showCheckoutInstructions() {
     const modal = createModal({
         title: '💳 Complete Your Donation',
@@ -643,8 +752,6 @@ function showCheckoutInstructions() {
         `,
         confirmText: 'Continue to Payment',
         onConfirm: () => {
-            // For demo purposes, redirect to LaunchGood
-            // In production, this would redirect to your Stripe Checkout
             window.open('https://www.launchgood.com/v4/campaign/ramadan_giving_building_bridges_of_hope', '_blank');
             closeModal();
         }
@@ -653,9 +760,6 @@ function showCheckoutInstructions() {
     document.body.appendChild(modal);
 }
 
-/**
- * Validate Donation Form
- */
 function validateDonationForm() {
     if (!donationState.amount || donationState.amount < 1) {
         showNotification('Please enter a valid donation amount', 'error');
@@ -674,9 +778,6 @@ function validateDonationForm() {
     return true;
 }
 
-/**
- * Collect Donor Information
- */
 function collectDonorInfo() {
     donationState.donorInfo = {
         firstName: document.getElementById('firstName')?.value || '',
@@ -686,15 +787,12 @@ function collectDonorInfo() {
     };
 }
 
-/**
- * Generate Reference ID
- */
 function generateReferenceId() {
     return 'RG_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 }
 
 // ============================================
-// BANK TRANSFER HANDLING
+// BANK TRANSFER
 // ============================================
 
 function showBankTransferConfirmation() {
@@ -729,12 +827,41 @@ function showBankTransferConfirmation() {
 }
 
 // ============================================
+// CONFETTI EFFECT
+// ============================================
+
+function triggerConfetti() {
+    const container = document.getElementById('confettiContainer');
+    if (!container) return;
+    
+    const colors = ['#2D6E7A', '#D4AF37', '#22c55e', '#ef4444', '#8b5cf6', '#f59e0b'];
+    const confettiCount = 150;
+    
+    for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+        confetti.style.width = (Math.random() * 8 + 6) + 'px';
+        confetti.style.height = (Math.random() * 8 + 6) + 'px';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        container.appendChild(confetti);
+    }
+    
+    setTimeout(() => {
+        container.innerHTML = '';
+    }, 4000);
+}
+
+// Make it available globally for success page
+window.triggerConfetti = triggerConfetti;
+
+// ============================================
 // UI UTILITIES
 // ============================================
 
-/**
- * Create Modal
- */
 function createModal({ title, content, confirmText, onConfirm }) {
     const modal = document.createElement('div');
     modal.className = 'donation-modal-overlay';
@@ -752,23 +879,15 @@ function createModal({ title, content, confirmText, onConfirm }) {
         </div>
     `;
     
-    // Add event listener for confirm button
     setTimeout(() => {
         const confirmBtn = document.getElementById('modalConfirmBtn');
-        if (confirmBtn) {
-            confirmBtn.addEventListener('click', onConfirm);
-        }
+        if (confirmBtn) confirmBtn.addEventListener('click', onConfirm);
     }, 0);
     
-    // Add modal styles
     addModalStyles();
-    
     return modal;
 }
 
-/**
- * Close Modal
- */
 function closeModal() {
     const modal = document.querySelector('.donation-modal-overlay');
     if (modal) {
@@ -778,9 +897,6 @@ function closeModal() {
 }
 window.closeModal = closeModal;
 
-/**
- * Add Modal Styles
- */
 function addModalStyles() {
     if (document.getElementById('modal-styles')) return;
     
@@ -793,8 +909,8 @@ function addModalStyles() {
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -809,55 +925,61 @@ function addModalStyles() {
         
         .donation-modal {
             background: #fff;
-            border-radius: 20px;
-            padding: 2rem;
-            max-width: 480px;
+            border-radius: 24px;
+            padding: 2.5rem;
+            max-width: 500px;
             width: 90%;
             position: relative;
-            animation: slideUp 0.3s ease;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
         }
         
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         
         .donation-modal h3 {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem;
+            font-size: 2rem;
             color: #1C4750;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             text-align: center;
         }
         
         .modal-content {
             color: #52524F;
-            line-height: 1.7;
+            line-height: 1.8;
             margin-bottom: 1.5rem;
         }
         
         .modal-close {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
+            top: 1.25rem;
+            right: 1.25rem;
+            background: #f5f5f3;
             border: none;
+            border-radius: 50%;
             cursor: pointer;
             color: #737370;
             padding: 0.5rem;
+            transition: all 0.2s;
         }
         
-        .modal-close:hover { color: #1A1A18; }
+        .modal-close:hover { 
+            background: #e5e5e3;
+            color: #1A1A18;
+            transform: rotate(90deg);
+        }
         
         .modal-confirm-btn {
             width: 100%;
-            padding: 1rem;
+            padding: 1.1rem;
             background: linear-gradient(135deg, #2D6E7A, #245A64);
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 1rem;
+            border-radius: 14px;
+            font-size: 1.05rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -865,18 +987,18 @@ function addModalStyles() {
         
         .modal-confirm-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(45, 110, 122, 0.3);
+            box-shadow: 0 10px 25px rgba(45, 110, 122, 0.35);
         }
         
         .bank-details-modal, .etransfer-details-modal {
             background: #F5F5F3;
-            padding: 1rem;
-            border-radius: 12px;
+            padding: 1.25rem;
+            border-radius: 14px;
             margin: 1rem 0;
         }
         
         .bank-details-modal h4, .etransfer-details-modal h4 {
-            font-size: 1rem;
+            font-size: 1.05rem;
             color: #2D6E7A;
             margin-bottom: 0.75rem;
         }
@@ -884,7 +1006,7 @@ function addModalStyles() {
         .bank-row {
             display: flex;
             justify-content: space-between;
-            padding: 0.25rem 0;
+            padding: 0.35rem 0;
             font-size: 0.9rem;
         }
         
@@ -894,11 +1016,12 @@ function addModalStyles() {
         }
         
         .transfer-note {
-            background: rgba(212, 175, 55, 0.1);
-            padding: 0.75rem;
-            border-radius: 8px;
+            background: rgba(212, 175, 55, 0.12);
+            padding: 0.85rem;
+            border-radius: 10px;
             font-size: 0.9rem;
             margin-top: 1rem;
+            border-left: 3px solid #D4AF37;
         }
         
         .donation-summary-modal {
@@ -911,7 +1034,7 @@ function addModalStyles() {
         .summary-row {
             display: flex;
             justify-content: space-between;
-            padding: 0.25rem 0;
+            padding: 0.35rem 0;
         }
         
         .recurring-info {
@@ -920,21 +1043,22 @@ function addModalStyles() {
         }
         
         .stripe-config-warning {
-            background: #FEF3CD;
+            background: linear-gradient(135deg, #FEF3CD, #FFF8E6);
             border: 1px solid #F0E6A6;
-            border-radius: 12px;
-            padding: 1.5rem;
+            border-radius: 16px;
+            padding: 2rem;
             text-align: center;
         }
         
         .stripe-config-warning .warning-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
         }
         
         .stripe-config-warning h4 {
             color: #856404;
             margin-bottom: 1rem;
+            font-size: 1.2rem;
         }
         
         .stripe-config-warning ol {
@@ -944,14 +1068,14 @@ function addModalStyles() {
         }
         
         .stripe-config-warning li {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem;
             color: #52524F;
         }
         
         .stripe-config-warning code {
-            background: rgba(0,0,0,0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
+            background: rgba(0,0,0,0.08);
+            padding: 3px 8px;
+            border-radius: 6px;
             font-size: 0.85em;
         }
         
@@ -959,19 +1083,10 @@ function addModalStyles() {
             color: #2D6E7A;
             text-decoration: underline;
         }
-        
-        .warning-note {
-            font-size: 0.85rem;
-            color: #666;
-            font-style: italic;
-        }
     `;
     document.head.appendChild(styles);
 }
 
-/**
- * Show Notification
- */
 function showNotification(message, type = 'info') {
     const existing = document.querySelector('.donation-notification');
     if (existing) existing.remove();
@@ -986,15 +1101,14 @@ function showNotification(message, type = 'info') {
     addNotificationStyles();
     document.body.appendChild(notification);
     
+    setTimeout(() => notification.classList.add('show'), 100);
+    
     setTimeout(() => {
-        notification.style.animation = 'slideInRight 0.3s ease reverse';
+        notification.classList.remove('show');
         setTimeout(() => notification.remove(), 300);
     }, 5000);
 }
 
-/**
- * Add Notification Styles
- */
 function addNotificationStyles() {
     if (document.getElementById('notification-styles')) return;
     
@@ -1007,27 +1121,76 @@ function addNotificationStyles() {
             right: 20px;
             padding: 1rem 1.5rem;
             background: #fff;
-            border-radius: 12px;
+            border-radius: 14px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             display: flex;
             align-items: center;
             gap: 0.75rem;
             z-index: 9998;
-            animation: slideInRight 0.3s ease;
             max-width: 400px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(100px); }
-            to { opacity: 1; transform: translateX(0); }
+        .donation-notification.show {
+            transform: translateX(0);
         }
         
         .donation-notification.error { border-left: 4px solid #ef4444; }
         .donation-notification.success { border-left: 4px solid #22c55e; }
         .donation-notification.info { border-left: 4px solid #2D6E7A; }
         
-        .notification-icon { font-size: 1.2rem; }
+        .notification-icon { font-size: 1.3rem; }
         .notification-message { color: #52524F; font-size: 0.95rem; }
+    `;
+    document.head.appendChild(styles);
+}
+
+function addToastStyles() {
+    if (document.getElementById('toast-styles')) return;
+    
+    const styles = document.createElement('style');
+    styles.id = 'toast-styles';
+    styles.textContent = `
+        .donation-toast {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, #fff, #f8f8f6);
+            border-radius: 14px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 9997;
+            transform: translateX(-120%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid #22c55e;
+        }
+        
+        .donation-toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast-icon { font-size: 1.5rem; }
+        
+        .toast-content {
+            color: #52524F;
+            font-size: 0.95rem;
+        }
+        
+        .toast-content strong {
+            color: #1A1A18;
+        }
+        
+        @media (max-width: 768px) {
+            .donation-toast {
+                left: 10px;
+                right: 10px;
+                bottom: 80px;
+            }
+        }
     `;
     document.head.appendChild(styles);
 }
@@ -1038,22 +1201,50 @@ function addNotificationStyles() {
 
 function initGoalProgressAnimations() {
     const progressBars = document.querySelectorAll('.goal-progress-fill');
+    const raisedAmounts = document.querySelectorAll('.goal-raised');
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const bar = entry.target;
                 const progress = bar.dataset.progress;
-                bar.style.width = '0%';
+                
+                // Animate progress bar
                 setTimeout(() => {
                     bar.style.width = `${progress}%`;
-                }, 100);
+                }, 200);
+                
                 observer.unobserve(bar);
             }
         });
-    }, { threshold: 0.5 });
+    }, { threshold: 0.3 });
     
     progressBars.forEach(bar => observer.observe(bar));
+    
+    // Animate raised amounts
+    const amountObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const raised = parseInt(el.dataset.raised);
+                animateCounter(el, 0, raised, 2000);
+                el.textContent = '$0';
+                
+                // Format as currency after animation
+                setTimeout(() => {
+                    el.textContent = '$' + raised.toLocaleString();
+                }, 2100);
+                
+                amountObserver.unobserve(el);
+            }
+        });
+    }, { threshold: 0.3 });
+    
+    raisedAmounts.forEach(el => {
+        if (el.dataset.raised) {
+            amountObserver.observe(el);
+        }
+    });
 }
 
 // ============================================
