@@ -363,6 +363,35 @@ function initDonationButtons() {
             }, 150);
         });
     });
+
+    // Quick amount buttons on homepage
+    const quickAmountBtns = document.querySelectorAll('.quick-amount-btn');
+    const impactPreview = document.querySelector('.donation-impact-preview');
+    
+    const impactMessages = {
+        25: '$25 provides hot meals for 5 people',
+        50: '$50 provides a winter kit for a family',
+        100: '$100 provides food packages for 2 families',
+        250: '$250 supports a child at our camp program'
+    };
+
+    quickAmountBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            quickAmountBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const amount = btn.dataset.amount;
+            if (impactPreview && impactMessages[amount]) {
+                impactPreview.textContent = impactMessages[amount];
+            }
+
+            // Haptic-like feedback animation
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 150);
+        });
+    });
 }
 
 /**

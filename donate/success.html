@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You! - Ramadan Giving</title>
+    <meta name="description" content="Thank you for your generous donation to Ramadan Giving.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/images/logo.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        .success-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .success-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 1.5rem 3rem;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+        }
+        
+        .success-container {
+            max-width: 600px;
+            text-align: center;
+        }
+        
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            box-shadow: 0 10px 40px rgba(34, 197, 94, 0.3);
+            animation: successPop 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes successPop {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .success-icon svg {
+            width: 60px;
+            height: 60px;
+            color: white;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: checkmark 0.5s 0.3s ease forwards;
+        }
+        
+        @keyframes checkmark {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        .success-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--primary-700);
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.6s 0.2s ease backwards;
+        }
+        
+        .success-message {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s 0.3s ease backwards;
+        }
+        
+        .success-details {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            text-align: left;
+            animation: fadeInUp 0.6s 0.4s ease backwards;
+        }
+        
+        .success-details h3 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: var(--text-muted);
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .success-note {
+            background: rgba(45, 110, 122, 0.1);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s 0.5s ease backwards;
+        }
+        
+        .success-note-icon {
+            font-size: 1.5rem;
+        }
+        
+        .success-note-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+        
+        .success-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.6s 0.6s ease backwards;
+        }
+        
+        .success-actions .btn-primary {
+            padding: 1rem 2rem;
+        }
+        
+        .success-actions .btn-secondary {
+            padding: 1rem 2rem;
+            background: var(--white);
+            border: 2px solid var(--neutral-200);
+            color: var(--text-primary);
+        }
+        
+        .success-actions .btn-secondary:hover {
+            border-color: var(--primary-400);
+            color: var(--primary-600);
+            background: var(--white);
+        }
+        
+        .share-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--neutral-200);
+            animation: fadeInUp 0.6s 0.7s ease backwards;
+        }
+        
+        .share-section h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            color: var(--primary-700);
+            margin-bottom: 1rem;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .share-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--neutral-100);
+            color: var(--text-secondary);
+            transition: var(--transition-base);
+            text-decoration: none;
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .share-btn.twitter:hover { background: #1DA1F2; color: white; }
+        .share-btn.facebook:hover { background: #4267B2; color: white; }
+        .share-btn.whatsapp:hover { background: #25D366; color: white; }
+        .share-btn.email:hover { background: var(--primary-500); color: white; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .success-actions {
+                flex-direction: column;
+            }
+            
+            .success-actions .btn-primary,
+            .success-actions .btn-secondary {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body class="success-page">
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="../index.html" class="logo">
+                <img src="../assets/images/logo.jpg" alt="Ramadan Giving" class="logo-img">
+                <span class="logo-text">Ramadan Giving</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html#about">About</a></li>
+                <li><a href="../index.html#impact">Our Impact</a></li>
+                <li><a href="../blog/">Blog</a></li>
+                <li><a href="../index.html#get-involved">Get Involved</a></li>
+                <li><a href="index.html" class="btn-primary nav-donate-btn">Donate</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="success-main">
+        <div class="success-container">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div>
+            
+            <h1 class="success-title">Thank You! 🌙</h1>
+            
+            <p class="success-message">
+                Your generous donation has been received. Together, we're making a real difference in the lives of families in need.
+            </p>
+            
+            <div class="success-details">
+                <h3>Donation Details</h3>
+                <div class="detail-row">
+                    <span class="detail-label">Reference</span>
+                    <span class="detail-value" id="referenceId">Loading...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value" style="color: #22c55e;">✓ Completed</span>
+                </div>
+            </div>
+            
+            <div class="success-note">
+                <span class="success-note-icon">📧</span>
+                <span class="success-note-text">A confirmation email with your tax receipt will be sent to your email address shortly.</span>
+            </div>
+            
+            <div class="success-actions">
+                <a href="../index.html" class="btn-primary">
+                    <span>Return Home</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="index.html" class="btn-secondary">
+                    <span>Donate Again</span>
+                </a>
+            </div>
+            
+            <div class="share-section">
+                <h4>Spread the Word</h4>
+                <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.95rem;">Help us reach more people by sharing</p>
+                <div class="share-buttons">
+                    <a href="https://twitter.com/intent/tweet?text=I%20just%20donated%20to%20%40RamadanGiving%20to%20help%20families%20in%20need.%20Join%20me!&url=https://ramadangiving.org/donate" target="_blank" class="share-btn twitter" aria-label="Share on Twitter">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        </svg>
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=https://ramadangiving.org/donate" target="_blank" class="share-btn facebook" aria-label="Share on Facebook">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                    </a>
+                    <a href="https://wa.me/?text=I%20just%20donated%20to%20Ramadan%20Giving%20to%20help%20families%20in%20need.%20Join%20me!%20https://ramadangiving.org/donate" target="_blank" class="share-btn whatsapp" aria-label="Share on WhatsApp">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                        </svg>
+                    </a>
+                    <a href="mailto:?subject=Support%20Ramadan%20Giving&body=I%20just%20donated%20to%20Ramadan%20Giving%20to%20help%20families%20in%20need.%20Join%20me!%20https://ramadangiving.org/donate" class="share-btn email" aria-label="Share via Email">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-pattern"></div>
+        <div class="footer-bottom" style="padding: 2rem 0;">
+            <p>&copy; 2025 Ramadan Giving Organization. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        // Parse session ID from URL
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+            
+            const referenceEl = document.getElementById('referenceId');
+            if (sessionId && referenceEl) {
+                // Show shortened session ID as reference
+                referenceEl.textContent = 'RG_' + sessionId.substring(0, 12).toUpperCase();
+            } else if (referenceEl) {
+                referenceEl.textContent = 'RG_' + Date.now().toString(36).toUpperCase();
+            }
+        });
+    </script>
+</body>
+
+</html>
+
