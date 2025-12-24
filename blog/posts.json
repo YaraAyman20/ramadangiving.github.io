@@ -1,5 +1,18 @@
 {
   "posts": [
+      {
+      "id": "volunteer-journey-ahmed",
+      "slug": "volunteer-journey-ahmed",
+      "title": "Ahmed's Volunteer Journey",
+      "excerpt": "Ahmed volunteered with Ramadan Giving for the first time this year and is super looking forward to volunteering with everyone else!",
+      "content": "volunteer-journey-ahmed.html",
+      "image": "../assets/years/2025.jpg",
+      "category": "volunteer",
+      "categoryLabel": "Volunteer Story",
+      "author": "Ahmed Hassan",
+      "date": "2025-12-24",
+      "featured": false
+    },
     {
       "id": "ramadan-2025-record-year",
       "slug": "ramadan-2025-record-year",
