@@ -1,183 +1,138 @@
-# Ramadan Giving Website
+# Ramadan Giving - Next.js Website
 
-A beautiful, responsive website for the Ramadan Giving Organization - a grassroots initiative building connection and serving vulnerable families in Cairo and the GTA.
+A modern, performant website for Ramadan Giving organization built with Next.js 15, TypeScript, and static export for GitHub Pages deployment.
 
-## 🌟 Features
+## Features
 
-- Responsive design with modern UI/UX
-- Interactive world map showing service locations
-- Photo gallery with slideshow
-- Impact timeline visualization
-- Particle.js background effects
-- Smooth animations and transitions
+- 🚀 **Next.js 15** with App Router
+- 📝 **TypeScript** for type safety
+- 🎨 **Modern UI/UX** with responsive design
+- 📱 **Mobile-first** approach
+- 🖼️ **Image Optimization** with Next.js Image
+- 📄 **Static Export** for GitHub Pages
+- 🔄 **Dynamic Blog** with static generation
+- 💰 **Donation System** with multiple payment options
 
-## 🚀 Running Locally
+## Pages
 
-This is a static website that doesn't require any build process. You can run it locally in several ways:
+- **Home** (`/`) - Main landing page with hero, about, team, impact timeline, news, gallery, and donation sections
+- **Donate** (`/donate`) - Comprehensive donation page with cause selection, amount selection, and payment methods
+- **Blog** (`/blog`) - Blog listing with category filtering and search
+- **Blog Post** (`/blog/[slug]`) - Individual blog post pages
 
-### Option 1: Simple HTTP Server (Recommended)
+## Getting Started
 
-Using Python (if installed):
+### Prerequisites
 
-```bash
-# Python 3
-python3 -m http.server 8000
+- Node.js 18+ 
+- npm or yarn
 
-# Python 2
-python -m SimpleHTTPServer 8000
-```
-
-Then open your browser and navigate to:
-```
-http://localhost:8000
-```
-
-### Option 2: Using Node.js (if installed)
+### Installation
 
 ```bash
-# Install http-server globally (one-time setup)
-npm install -g http-server
+# Install dependencies
+npm install
 
-# Run the server
-http-server -p 8000
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server (for testing)
+npm run start
 ```
 
-Then open your browser and navigate to:
-```
-http://localhost:8000
-```
-
-### Option 3: Using VS Code Live Server
-
-If you're using Visual Studio Code:
-
-1. Install the "Live Server" extension
-2. Right-click on `index.html`
-3. Select "Open with Live Server"
-
-### Option 4: Direct File Opening
-
-You can also simply open `index.html` directly in your browser, though some features (like loading external resources) may be limited.
-
-## 📁 Project Structure
+### Project Structure
 
 ```
-ramadangiving.github.io/
-├── index.html          # Main HTML file
-├── css/
-│   └── style.css      # Stylesheet
-├── js/
-│   └── script.js      # JavaScript functionality
+src/
+├── app/
+│   ├── globals.css          # Global styles
+│   ├── layout.tsx           # Root layout with Navbar & Footer
+│   ├── page.tsx             # Home page
+│   ├── blog/
+│   │   ├── page.tsx         # Blog listing page
+│   │   └── [slug]/
+│   │       └── page.tsx     # Dynamic blog post pages
+│   └── donate/
+│       └── page.tsx         # Donation page
+├── components/
+│   ├── Navbar.tsx           # Navigation component
+│   ├── Footer.tsx           # Footer component
+│   └── sections/            # Home page sections
+│       ├── HeroSection.tsx
+│       ├── AboutSection.tsx
+│       ├── TeamSection.tsx
+│       ├── ImpactSection.tsx
+│       ├── NewsSection.tsx
+│       ├── GallerySection.tsx
+│       ├── GetInvolvedSection.tsx
+│       ├── DonateSection.tsx
+│       └── LocationsSection.tsx
+public/
 ├── assets/
-│   ├── images/        # Logo and team images
-│   └── years/         # Year-specific images
-└── README.md          # This file
+│   ├── images/              # Static images
+│   ├── years/               # Year-specific images
+│   └── events/              # Event gallery images
+└── posts.json               # Blog posts data
 ```
 
-## 🌐 GitHub Pages Deployment
+## Deployment to GitHub Pages
 
-This repository is configured for automatic deployment to GitHub Pages. Since the repository is named `ramadangiving.github.io`, GitHub will automatically:
+This project is configured to automatically deploy to GitHub Pages using GitHub Actions.
 
-1. **Deploy from the `main` branch** (or `master` if that's your default branch)
-2. **Publish to**: `https://ramadangiving.github.io`
+### Setup
 
-### Automatic Deployment Setup
-
-GitHub Pages should already be enabled, but to verify or configure:
-
-1. Go to your repository on GitHub
-2. Click on **Settings** → **Pages**
-3. Under **Source**, select:
-   - **Branch**: `main` (or `master`)
-   - **Folder**: `/ (root)`
-4. Click **Save**
+1. Push the code to your GitHub repository
+2. Go to repository Settings > Pages
+3. Under "Build and deployment", select "GitHub Actions" as the source
+4. The workflow will automatically build and deploy on push to `main`
 
 ### Manual Deployment
 
-Any push to the `main` branch will automatically trigger a deployment:
+If you need to deploy manually:
 
 ```bash
-# Make your changes
-git add .
-git commit -m "Update website content"
-git push origin main
+# Build the static site
+npm run build
+
+# The output will be in the ./out directory
+# Upload this directory to your hosting service
 ```
 
-Deployment typically takes 1-2 minutes. You can check the deployment status:
-- Go to **Settings** → **Pages** to see deployment history
-- Or check the **Actions** tab for deployment logs
+## Configuration
 
-### Custom Domain (Optional)
+### Environment Variables
 
-If you have a custom domain:
+Create a `.env.local` file for local development:
 
-1. Go to **Settings** → **Pages**
-2. Under **Custom domain**, enter your domain
-3. Follow GitHub's instructions to configure DNS records
-4. Enable **Enforce HTTPS** (recommended)
+```env
+# Stripe (for donation processing)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+```
 
-## 🛠️ Development Workflow
+### Next.js Config
 
-### Making Changes
+The `next.config.ts` is configured for static export:
 
-1. **Create a branch** for your changes:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
+```typescript
+const nextConfig = {
+  output: 'export',
+  images: {
+    unoptimized: true,
+  },
+  trailingSlash: true,
+};
+```
 
-2. **Make your edits** to HTML, CSS, or JS files
+## Contributing
 
-3. **Test locally** using one of the methods above
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
-4. **Commit and push**:
-   ```bash
-   git add .
-   git commit -m "Description of changes"
-   git push origin feature/your-feature-name
-   ```
+## License
 
-5. **Create a Pull Request** on GitHub for review
-
-6. **Merge to main** - Once merged, GitHub Pages will automatically deploy
-
-### Best Practices
-
-- Always test changes locally before pushing
-- Use descriptive commit messages
-- Create pull requests for review before merging to main
-- Keep the `main` branch stable and production-ready
-
-## 📝 Technologies Used
-
-- **HTML5** - Structure
-- **CSS3** - Styling with modern features (flexbox, grid, animations)
-- **JavaScript (ES6+)** - Interactivity
-- **Particles.js** - Background particle effects
-- **amCharts 5** - Interactive world map
-- **Google Fonts** - Typography (Cormorant Garamond, DM Sans, Crimson Pro)
-
-## 🔧 Troubleshooting
-
-### Images not loading locally
-- Make sure you're using a local server (not just opening the HTML file)
-- Check that image paths are correct relative to the HTML file
-
-### GitHub Pages not updating
-- Wait 1-2 minutes after pushing
-- Check the **Actions** tab for any deployment errors
-- Verify GitHub Pages is enabled in Settings → Pages
-- Clear your browser cache (Ctrl+Shift+R or Cmd+Shift+R)
-
-### Styling issues
-- Ensure `css/style.css` is properly linked in `index.html`
-- Check browser console for any 404 errors
-
-## 📞 Support
-
-For questions or issues:
-- Open an issue on GitHub
-- Contact the development team
-
-## 📄 License
-
-All rights reserved. © 2025 Ramadan Giving Organization
+This project is created for Ramadan Giving Organization. All rights reserved.

@@ -1,0 +1,82 @@
+{
+  "posts": [
+    {
+      "id": "4",
+      "slug": "ramadan-2025-record-year",
+      "title": "Ramadan Giving 2025: A Record-Breaking Year of Community Impact",
+      "excerpt": "1,965 lunch bags, 530 winter kits, and over $108K raised for Gaza relief. See how our community came together for our most impactful year yet.",
+      "content": "ramadan-2025-record-year.html",
+      "image": "/assets/years/2025.jpg",
+      "category": "announcement",
+      "categoryLabel": "Announcement",
+      "author": "Ramadan Giving Team",
+      "date": "2025-12-15",
+      "featured": true
+    },
+    {
+      "id": "3",
+      "slug": "gaza-relief-gala",
+      "title": "$197K+ Raised at Gala for Gaza Relief Efforts",
+      "excerpt": "Our community united to support families affected by the humanitarian crisis in Gaza through our annual gala event.",
+      "content": "gaza-relief-gala.html",
+      "image": "/assets/years/2024.jpg",
+      "category": "relief",
+      "categoryLabel": "Relief Effort",
+      "author": "Ramadan Giving Team",
+      "date": "2025-11-28",
+      "featured": false
+    },
+    {
+      "id": "6",
+      "slug": "winter-kit-distribution-2025",
+      "title": "Winter Kits 2025: Warmth for 530 Families",
+      "excerpt": "As temperatures drop, our community ensures no family faces the cold alone. See how we distributed 530 winter kits across the GTA.",
+      "content": "winter-kit-distribution-2025.html",
+      "image": "/assets/years/2025-cairo.jpg",
+      "category": "program",
+      "categoryLabel": "Programs",
+      "author": "Ramadan Giving Team",
+      "date": "2025-11-15",
+      "featured": false
+    },
+    {
+      "id": "1",
+      "slug": "children-camp-2025",
+      "title": "Camp Day Joy: 174 Children Across Two Continents",
+      "excerpt": "111 children in GTA and 63 in Cairo including Gazan evacuees enjoyed a day of fun, games, and celebration.",
+      "content": "children-camp-2025.html",
+      "image": "/assets/years/2025-cairo.jpg",
+      "category": "program",
+      "categoryLabel": "Programs",
+      "author": "Ramadan Giving Team",
+      "date": "2025-10-12",
+      "featured": false
+    },
+    {
+      "id": "5",
+      "slug": "volunteer-spotlight-sarah",
+      "title": "Volunteer Spotlight: Sarah's Journey from Volunteer to Team Lead",
+      "excerpt": "After three years with Ramadan Giving, Sarah shares her transformative experience and how volunteering changed her life.",
+      "content": "volunteer-spotlight-sarah.html",
+      "image": "/assets/years/2023.jpg",
+      "category": "volunteer",
+      "categoryLabel": "Volunteer Stories",
+      "author": "Sarah Ahmed",
+      "date": "2025-09-20",
+      "featured": false
+    },
+    {
+      "id": "2",
+      "slug": "community-iftar-2025",
+      "title": "Community Iftar: Breaking Fast Together",
+      "excerpt": "Over 500 community members gathered for our annual iftar dinner, celebrating the spirit of Ramadan through shared meals and fellowship.",
+      "content": "community-iftar-2025.html",
+      "image": "/assets/years/2022.jpg",
+      "category": "community",
+      "categoryLabel": "Community",
+      "author": "Ramadan Giving Team",
+      "date": "2025-03-15",
+      "featured": false
+    }
+  ]
+}
