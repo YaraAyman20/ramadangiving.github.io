@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Check, CreditCard, Loader2, Heart, Package, Sparkles, ChevronRight, ArrowLeft, Landmark, Wallet } from "lucide-react";
-import { supabase, SUPABASE_ANON_KEY } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { GuestDonationModal } from "@/components/GuestDonationModal";
@@ -104,13 +104,13 @@ export function SmartDonationModal({ open, onOpenChange }: SmartDonationModalPro
       });
       return;
     }
-    
+
     // Check if user is logged in
     if (!user) {
       setShowGuestModal(true);
       return;
     }
-    
+
     setStep(2);
   };
 
@@ -149,10 +149,11 @@ export function SmartDonationModal({ open, onOpenChange }: SmartDonationModalPro
         throw new Error("Supabase client not initialized");
       }
 
+
+
       const session = await supabase.auth.getSession();
-      // Always include Authorization header - use session token if available, otherwise anon key
-      const authToken = session.data.session?.access_token || SUPABASE_ANON_KEY;
-      
+      const authToken = session.data.session?.access_token;
+
       const { data, error } = await supabase.functions.invoke("create-payment-intent", {
         body: {
           amount: amount,
@@ -160,13 +161,17 @@ export function SmartDonationModal({ open, onOpenChange }: SmartDonationModalPro
           isRecurring: false,
           frequency: "one-time",
           donorType: user ? "registered" : (isAnonymous ? "anonymous" : "guest"),
+          guestInfo: user ? {
+            name: user.user_metadata?.full_name || user.email?.split('@')[0] || "Registered User",
+            email: user.email || "",
+          } : undefined,
           userId: user?.id,
           campaignId: selectedCause || "general",
           campaignTitle: getCauseName(),
         },
-        headers: {
+        headers: authToken ? {
           Authorization: `Bearer ${authToken}`,
-        },
+        } : undefined,
       });
 
       if (error) {
@@ -212,8 +217,8 @@ export function SmartDonationModal({ open, onOpenChange }: SmartDonationModalPro
                 {step === 1 ? "Choose Your Impact" : "Confirm Your Gift"}
               </DialogTitle>
               <p className="text-white/80 mt-1">
-                {step === 1 
-                  ? "See exactly how your donation helps our community" 
+                {step === 1
+                  ? "See exactly how your donation helps our community"
                   : "Review your donation details"}
               </p>
             </DialogHeader>
@@ -235,8 +240,8 @@ export function SmartDonationModal({ open, onOpenChange }: SmartDonationModalPro
                         "w-full p-4 rounded-2xl border-2 transition-all duration-300 text-left",
                         "bg-gradient-to-r hover:scale-[1.02]",
                         option.color,
-                        selectedAmount === option.amount 
-                          ? `${option.borderColor} ring-2 ring-offset-2 ring-primary/20` 
+                        selectedAmount === option.amount
+                          ? `${option.borderColor} ring-2 ring-offset-2 ring-primary/20`
                           : "border-border/50"
                       )}
                     >
@@ -417,7 +422,7 @@ export function SmartDonationModal({ open, onOpenChange }: SmartDonationModalPro
       </Dialog>
 
       {/* Guest Modal with Sign In handler */}
-      <GuestDonationModal 
+      <GuestDonationModal
         open={showGuestModal}
         onOpenChange={setShowGuestModal}
         onContinueAsGuest={handleGuestContinue}

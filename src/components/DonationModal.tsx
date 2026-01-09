@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Check, CreditCard, Loader2, Wallet, Landmark, ArrowLeft } from "lucide-react";
-import { supabase, SUPABASE_ANON_KEY } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 interface DonationModalProps {
   open: boolean;
@@ -19,6 +20,7 @@ interface DonationModalProps {
 const presetAmounts = [10, 50, 100];
 
 export function DonationModal({ open, onOpenChange, campaign }: DonationModalProps) {
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [selectedAmount, setSelectedAmount] = useState<number | null>(50);
   const [customAmount, setCustomAmount] = useState("");
@@ -64,22 +66,25 @@ export function DonationModal({ open, onOpenChange, campaign }: DonationModalPro
     setIsLoading(true);
     try {
       const session = await supabase.auth.getSession();
-      // Always include Authorization header
-      const authToken = session.data.session?.access_token || SUPABASE_ANON_KEY;
-      
+      const authToken = session.data.session?.access_token;
+
       const { data, error } = await supabase.functions.invoke("create-payment-intent", {
         body: {
           amount: amount,
           currency: "USD",
           isRecurring: isMonthly,
           frequency: isMonthly ? "monthly" : "one-time",
-          donorType: session.data.session ? "registered" : "guest",
+          donorType: user ? "registered" : "guest",
+          guestInfo: user ? {
+            name: user.user_metadata?.full_name || user.email?.split('@')[0] || "Registered User",
+            email: user.email || "",
+          } : undefined,
           campaignId: campaign.id,
           campaignTitle: campaign.title,
         },
-        headers: {
+        headers: authToken ? {
           Authorization: `Bearer ${authToken}`,
-        },
+        } : undefined,
       });
 
       if (error) {
@@ -131,11 +136,10 @@ export function DonationModal({ open, onOpenChange, campaign }: DonationModalPro
                 <Button
                   key={preset}
                   variant={selectedAmount === preset ? "default" : "outline"}
-                  className={`h-14 text-lg font-semibold rounded-xl ${
-                    selectedAmount === preset
-                      ? "bg-primary text-primary-foreground"
-                      : "border-border hover:border-primary/50"
-                  }`}
+                  className={`h-14 text-lg font-semibold rounded-xl ${selectedAmount === preset
+                    ? "bg-primary text-primary-foreground"
+                    : "border-border hover:border-primary/50"
+                    }`}
                   onClick={() => handleAmountSelect(preset)}
                 >
                   ${preset}

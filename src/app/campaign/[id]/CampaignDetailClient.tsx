@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { supabase, SUPABASE_ANON_KEY } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Heart, Share2, Loader2, CreditCard } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
 
 interface Campaign {
@@ -38,10 +39,11 @@ const impactMessages: Record<string, string> = {
 const presetAmounts = [10, 25, 50, 100, 250];
 
 export default function CampaignDetailClient() {
+  const { user } = useAuth();
   const params = useParams();
   const id = params.id as string;
   const router = useRouter();
-  
+
   // Donation state
   const [selectedAmount, setSelectedAmount] = useState<number | null>(50);
   const [customAmount, setCustomAmount] = useState("");
@@ -56,7 +58,7 @@ export default function CampaignDetailClient() {
         .select("*")
         .eq("id", id)
         .single();
-      
+
       if (error) throw error;
       return data as Campaign;
     },
@@ -88,23 +90,28 @@ export default function CampaignDetailClient() {
 
     setIsLoading(true);
     try {
+
+
       const session = await supabase.auth.getSession();
-      // Always include Authorization header
-      const authToken = session.data.session?.access_token || SUPABASE_ANON_KEY;
-      
+      const authToken = session.data.session?.access_token;
+
       const { data, error } = await supabase.functions.invoke("create-payment-intent", {
         body: {
           amount: amount,
           currency: "USD",
           isRecurring: isMonthly,
           frequency: isMonthly ? "monthly" : "one-time",
-          donorType: session.data.session ? "registered" : "guest",
+          donorType: user ? "registered" : "guest",
+          guestInfo: user ? {
+            name: user.user_metadata?.full_name || user.email?.split('@')[0] || "Registered User",
+            email: user.email || "",
+          } : undefined,
           campaignId: campaign.id,
           campaignTitle: campaign.title,
         },
-        headers: {
+        headers: authToken ? {
           Authorization: `Bearer ${authToken}`,
-        },
+        } : undefined,
       });
 
       if (error) {
@@ -179,18 +186,17 @@ export default function CampaignDetailClient() {
     <Card className={`border-border/50 ${isSticky ? 'sticky top-24' : ''}`}>
       <CardContent className="p-5 space-y-5">
         <h3 className="font-semibold text-foreground text-lg">Make a Donation</h3>
-        
+
         {/* Amount Grid */}
         <div className="grid grid-cols-5 gap-2">
           {presetAmounts.map((preset) => (
             <Button
               key={preset}
               variant={selectedAmount === preset ? "default" : "outline"}
-              className={`h-12 text-sm font-semibold rounded-xl ${
-                selectedAmount === preset
-                  ? "bg-primary text-primary-foreground"
-                  : "border-border hover:border-primary/50"
-              }`}
+              className={`h-12 text-sm font-semibold rounded-xl ${selectedAmount === preset
+                ? "bg-primary text-primary-foreground"
+                : "border-border hover:border-primary/50"
+                }`}
               onClick={() => handleAmountSelect(preset)}
             >
               ${preset}

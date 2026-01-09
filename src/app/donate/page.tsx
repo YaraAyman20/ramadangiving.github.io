@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase, SUPABASE_ANON_KEY } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -39,11 +39,11 @@ export default function Donate() {
   const [frequency, setFrequency] = useState("one-time");
   const [allocation, setAllocation] = useState("general");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // Guest donation fields
   const [guestName, setGuestName] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
-  
+
   // Dedication fields
   const [dedication, setDedication] = useState({ in_honor_of: "", message: "" });
 
@@ -73,7 +73,7 @@ export default function Donate() {
       if (!guestEmail.trim() || !guestEmail.includes("@")) {
         toast.error("Please enter a valid email address");
         return false;
-    }
+      }
     }
 
     return true;
@@ -90,9 +90,8 @@ export default function Donate() {
     setIsLoading(true);
     try {
       const session = await supabase.auth.getSession();
-      // Always include Authorization header - use session token if available, otherwise anon key
-      const authToken = session.data.session?.access_token || SUPABASE_ANON_KEY;
-      
+      const authToken = session.data.session?.access_token;
+
       const { data, error } = await supabase.functions.invoke("create-payment-intent", {
         body: {
           amount,
@@ -103,15 +102,18 @@ export default function Donate() {
           guestInfo: donorType === "guest" ? {
             name: guestName,
             email: guestEmail,
-          } : undefined,
+          } : (user ? {
+            name: user.user_metadata?.full_name || user.email?.split('@')[0] || "Registered User",
+            email: user.email || "",
+          } : undefined),
           userId: user?.id,
           campaignId: allocation,
           campaignTitle: allocations.find(a => a.value === allocation)?.label || "General Donation",
           dedication: (dedication.in_honor_of || dedication.message) ? dedication : undefined,
         },
-        headers: {
+        headers: authToken ? {
           Authorization: `Bearer ${authToken}`,
-        },
+        } : undefined,
       });
 
       if (error) {
@@ -140,7 +142,7 @@ export default function Donate() {
       <div className="text-center space-y-2 pt-6">
         <h1 className="text-3xl font-bold text-foreground">Make a Donation</h1>
         <p className="text-muted-foreground">Your generosity transforms lives. Every dollar counts.</p>
-          </div>
+      </div>
 
       <Card className="border-border/50">
         <CardContent className="p-6 space-y-6">
@@ -263,9 +265,8 @@ export default function Donate() {
                   key={amt}
                   variant={selectedAmount === amt && !customAmount ? "default" : "outline"}
                   onClick={() => { setSelectedAmount(amt); setCustomAmount(""); }}
-                  className={`h-12 text-lg font-semibold rounded-xl ${
-                    selectedAmount === amt && !customAmount ? "bg-primary text-primary-foreground" : ""
-                  }`}
+                  className={`h-12 text-lg font-semibold rounded-xl ${selectedAmount === amt && !customAmount ? "bg-primary text-primary-foreground" : ""
+                    }`}
                 >
                   ${amt}
                 </Button>
@@ -274,14 +275,14 @@ export default function Donate() {
             <div className="relative">
               <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
-                        type="number"
+                type="number"
                 placeholder="Custom amount"
                 value={customAmount}
                 onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }}
                 className="w-full h-12 pl-12 pr-4 rounded-xl"
-                          />
-                        </div>
-                      </div>
+              />
+            </div>
+          </div>
 
           {/* Allocation Dropdown */}
           <div className="space-y-3">
@@ -361,7 +362,7 @@ export default function Donate() {
           <div className="flex items-center gap-2">
             <Banknote className="w-5 h-5 text-primary" />
             <span className="font-medium text-foreground">Donate via E-Transfer</span>
-        </div>
+          </div>
           <p className="text-sm text-muted-foreground">
             You can also donate directly via Interac e-Transfer:
           </p>
@@ -370,7 +371,7 @@ export default function Donate() {
             <p className="text-xs text-muted-foreground mt-1">
               Please include your email in the message for a tax receipt.
             </p>
-        </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -380,7 +381,7 @@ export default function Donate() {
           <div className="flex items-center gap-2">
             <Info className="w-4 h-4 text-gold" />
             <span className="font-medium text-foreground text-sm">How Funds Are Used</span>
-      </div>
+          </div>
           <p className="text-xs text-muted-foreground">
             100% of Zakat goes directly to eligible recipients. General donations: 90%+ to programs, minimal overhead for essential operations.
           </p>
@@ -393,7 +394,7 @@ export default function Donate() {
           <div className="flex items-center gap-2">
             <Gift className="w-5 h-5 text-primary" />
             <span className="font-medium text-foreground">In-Kind Donations</span>
-        </div>
+          </div>
           <p className="text-sm text-muted-foreground">
             We also accept material goods: non-perishable food, warm clothing, school supplies, and hygiene items.
           </p>

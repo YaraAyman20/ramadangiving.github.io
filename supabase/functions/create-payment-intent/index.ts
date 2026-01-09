@@ -41,21 +41,21 @@ interface DonationRequest {
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
-    return new Response(null, { 
+    return new Response(null, {
       status: 204,
-      headers: corsHeaders 
+      headers: corsHeaders
     });
   }
 
   try {
     // SUPABASE_URL is automatically provided by Supabase Edge Functions
     // If not available, construct from request URL
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") || 
-      (req.headers.get("x-supabase-url") || 
-       new URL(req.url).origin.replace(/\/functions\/v1.*$/, ""));
-    
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ||
+      (req.headers.get("x-supabase-url") ||
+        new URL(req.url).origin.replace(/\/functions\/v1.*$/, ""));
+
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    
+
     if (!supabaseUrl || !serviceRoleKey) {
       console.error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
       return new Response(
@@ -66,7 +66,7 @@ serve(async (req) => {
         }
       );
     }
-    
+
     const supabaseClient = createClient(
       supabaseUrl,
       serviceRoleKey,
@@ -80,15 +80,20 @@ serve(async (req) => {
 
     // Get auth token if provided (optional - for registered users)
     const authHeader = req.headers.get("Authorization");
+    console.log("Auth header present:", !!authHeader);
+
     let user = null;
     if (authHeader) {
       const token = authHeader.replace("Bearer ", "");
       try {
-        const { data: { user: authUser } } = await supabaseClient.auth.getUser(token);
+        const { data: { user: authUser }, error: userError } = await supabaseClient.auth.getUser(token);
+        if (userError) {
+          console.error("Error getting user from token:", userError.message);
+        }
         user = authUser;
+        console.log("User resolved:", !!user, user?.id);
       } catch (e) {
-        // Invalid token, but continue as anonymous/guest
-        console.log("Invalid auth token, proceeding as anonymous");
+        console.error("Exception getting user from token:", e);
       }
     }
 
@@ -132,23 +137,60 @@ serve(async (req) => {
       );
     }
 
+    // Validate registered donor authentication - be VERY permissive to ensure donations go through
+    let effectiveDonorType = actualDonorType;
+
+    // If registered but no verified user, check for fallback options
+    if (actualDonorType === "registered" && !user) {
+      console.warn("Registered donor type requested but no user resolved from token.");
+      console.log("guestInfo present:", !!guestInfo, "email:", guestInfo?.email, "name:", guestInfo?.name);
+
+      // If we have guest info with email and name, fallback to guest mode
+      if (guestInfo?.email && guestInfo?.name) {
+        console.log("Falling back to guest mode for unverified registered user with guestInfo");
+        effectiveDonorType = "guest";
+      } else {
+        // Even without guestInfo, if we have userId, try to proceed as anonymous to not block donation
+        console.log("No guestInfo fallback available. Proceeding as anonymous to not block donation.");
+        effectiveDonorType = "anonymous";
+      }
+    }
+
+    console.log("Final effectiveDonorType:", effectiveDonorType);
+
     // Generate claim token for anonymous/guest donations
-    const claimToken = actualDonorType !== "registered"
+    const claimToken = effectiveDonorType !== "registered"
       ? crypto.randomUUID()
       : null;
 
     // Create or retrieve Stripe customer
     let customerId: string | null = null;
-    if (user && actualDonorType === "registered") {
+    if (user && effectiveDonorType === "registered") {
       // Check if customer exists
-      const { data: profile } = await supabaseClient
+      const { data: profile, error: profileError } = await supabaseClient
         .from("profiles")
         .select("id")
         .eq("id", user.id)
         .single();
 
+      if (profileError) {
+        console.warn("Error fetching profile:", profileError);
+      }
+
       if (profile) {
         // Try to find existing Stripe customer
+        const customers = await stripe.customers.list({
+          email: user.email,
+          limit: 1,
+        });
+
+        if (customers.data.length > 0) {
+          customerId = customers.data[0].id;
+        }
+      }
+
+      // If no customer ID found yet (profile missing or no stripe customer linked), try to find by email or create
+      if (!customerId) {
         const customers = await stripe.customers.list({
           email: user.email,
           limit: 1,
@@ -167,7 +209,7 @@ serve(async (req) => {
           customerId = customer.id;
         }
       }
-    } else if (actualDonorType === "guest" && guestInfo?.email) {
+    } else if (effectiveDonorType === "guest" && guestInfo?.email) {
       // Create or retrieve guest customer
       const customers = await stripe.customers.list({
         email: guestInfo.email,
@@ -193,11 +235,11 @@ serve(async (req) => {
 
     // Get app URL with fallback
     const appUrl = Deno.env.get("NEXT_PUBLIC_APP_URL") || "http://localhost:3000";
-    
+
     if (isRecurring) {
       // Create recurring donation (subscription)
       const priceId = Deno.env.get(`STRIPE_PRICE_ID_${frequency.toUpperCase()}`) || "";
-      
+
       if (!priceId) {
         // Create price on the fly (for flexibility)
         const price = await stripe.prices.create({
@@ -224,7 +266,7 @@ serve(async (req) => {
           success_url: `${appUrl}/donation-success?session_id={CHECKOUT_SESSION_ID}&type=recurring`,
           cancel_url: `${appUrl}/donate?canceled=true`,
           metadata: {
-            donor_type: actualDonorType,
+            donor_type: effectiveDonorType,
             user_id: user?.id || "",
             campaign_id: campaignId || "",
             campaign_title: campaignTitle || "",
@@ -232,6 +274,7 @@ serve(async (req) => {
             guest_name: guestInfo?.name || "",
             guest_email: guestInfo?.email || "",
           },
+          customer_email: !customerId ? (user?.email || guestInfo?.email) : undefined,
           allow_promotion_codes: true,
         });
 
@@ -250,7 +293,7 @@ serve(async (req) => {
           success_url: `${appUrl}/donation-success?session_id={CHECKOUT_SESSION_ID}&type=recurring`,
           cancel_url: `${appUrl}/donate?canceled=true`,
           metadata: {
-            donor_type: actualDonorType,
+            donor_type: effectiveDonorType,
             user_id: user?.id || "",
             campaign_id: campaignId || "",
             campaign_title: campaignTitle || "",
@@ -284,7 +327,7 @@ serve(async (req) => {
         success_url: `${appUrl}/donation-success?session_id={CHECKOUT_SESSION_ID}&amount=${amount}&claim_token=${claimToken || ""}`,
         cancel_url: `${appUrl}/donate?canceled=true`,
         metadata: {
-          donor_type: actualDonorType,
+          donor_type: effectiveDonorType,
           user_id: user?.id || "",
           campaign_id: campaignId || "",
           campaign_title: campaignTitle || "",
@@ -302,8 +345,8 @@ serve(async (req) => {
     // Create donation record in database (pending status)
     const donationData: any = {
       user_id: user?.id || null,
-      donor_type: actualDonorType,
-      guest_info: actualDonorType === "guest" ? guestInfo : null,
+      donor_type: effectiveDonorType,
+      guest_info: effectiveDonorType === "guest" ? guestInfo : null,
       stripe_payment_intent_id: "session_id" in paymentIntent ? paymentIntent.id : null,
       stripe_customer_id: customerId,
       amount: amount,
@@ -333,7 +376,7 @@ serve(async (req) => {
     }
 
     // If guest donation, track in guest_donors table
-    if (actualDonorType === "guest" && guestInfo?.email && donation) {
+    if (effectiveDonorType === "guest" && guestInfo?.email && donation) {
       const { data: existingGuest } = await supabaseClient
         .from("guest_donors")
         .select("id, donation_ids")
