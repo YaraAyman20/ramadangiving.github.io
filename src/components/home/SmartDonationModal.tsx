@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Check, CreditCard, Loader2, Heart, Package, Sparkles, ChevronRight, ArrowLeft, Landmark, Wallet } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, SUPABASE_ANON_KEY } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { GuestDonationModal } from "@/components/GuestDonationModal";
@@ -145,13 +145,27 @@ export function SmartDonationModal({ open, onOpenChange }: SmartDonationModalPro
 
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
+      if (!supabase) {
+        throw new Error("Supabase client not initialized");
+      }
+
+      const session = await supabase.auth.getSession();
+      // Always include Authorization header - use session token if available, otherwise anon key
+      const authToken = session.data.session?.access_token || SUPABASE_ANON_KEY;
+      
+      const { data, error } = await supabase.functions.invoke("create-payment-intent", {
         body: {
+          amount: amount,
+          currency: "USD",
+          isRecurring: false,
+          frequency: "one-time",
+          donorType: user ? "registered" : (isAnonymous ? "anonymous" : "guest"),
+          userId: user?.id,
           campaignId: selectedCause || "general",
           campaignTitle: getCauseName(),
-          amount: amount,
-          isMonthly: false,
-          isAnonymous: isAnonymous,
+        },
+        headers: {
+          Authorization: `Bearer ${authToken}`,
         },
       });
 

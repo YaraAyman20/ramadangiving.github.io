@@ -12,7 +12,8 @@
     "new-post": "node scripts/new-post.js",
     "analyze": "ANALYZE=true next build",
     "optimize:images": "node scripts/optimize-images.js",
-    "lighthouse": "npx lighthouse https://ramadangiving.github.io --output html --output-path ./lighthouse-report.html"
+    "lighthouse": "npx lighthouse https://ramadangiving.github.io --output html --output-path ./lighthouse-report.html",
+    "fix:signup": "node scripts/fix-signup-trigger.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -43,6 +44,7 @@
     "@radix-ui/react-toggle": "^1.1.9",
     "@radix-ui/react-toggle-group": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.7",
+    "@stripe/stripe-js": "^8.6.1",
     "@supabase/supabase-js": "^2.88.0",
     "@tanstack/react-query": "^5.83.0",
     "class-variance-authority": "^0.7.1",
@@ -63,6 +65,7 @@
     "remark": "^15.0.1",
     "remark-html": "^16.0.1",
     "sonner": "^1.7.4",
+    "stripe": "^20.1.2",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",

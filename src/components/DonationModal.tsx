@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Check, CreditCard, Loader2, Wallet, Landmark, ArrowLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, SUPABASE_ANON_KEY } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
 interface DonationModalProps {
@@ -63,12 +63,22 @@ export function DonationModal({ open, onOpenChange, campaign }: DonationModalPro
 
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
+      const session = await supabase.auth.getSession();
+      // Always include Authorization header
+      const authToken = session.data.session?.access_token || SUPABASE_ANON_KEY;
+      
+      const { data, error } = await supabase.functions.invoke("create-payment-intent", {
         body: {
+          amount: amount,
+          currency: "USD",
+          isRecurring: isMonthly,
+          frequency: isMonthly ? "monthly" : "one-time",
+          donorType: session.data.session ? "registered" : "guest",
           campaignId: campaign.id,
           campaignTitle: campaign.title,
-          amount: amount,
-          isMonthly: isMonthly,
+        },
+        headers: {
+          Authorization: `Bearer ${authToken}`,
         },
       });
 

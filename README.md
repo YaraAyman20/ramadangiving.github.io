@@ -11,14 +11,34 @@ A modern, performant website for Ramadan Giving organization built with Next.js 
 - 🖼️ **Image Optimization** with Next.js Image
 - 📄 **Static Export** for GitHub Pages
 - 🔄 **Dynamic Blog** with static generation
-- 💰 **Donation System** with multiple payment options
+- 💰 **Complete Donation System** with:
+  - Three donation modes: Anonymous, Guest, and Registered
+  - Stripe integration (Credit Cards, Google Pay, Apple Pay, PayPal)
+  - One-time and recurring donations
+  - User dashboard with donation history
+  - Payment method management
+  - Receipt generation and email delivery
+  - Donation claiming system
+  - Supabase backend with Row Level Security
 
 ## Pages
 
+### Public Pages
 - **Home** (`/`) - Main landing page with hero, about, team, impact timeline, news, gallery, and donation sections
-- **Donate** (`/donate`) - Comprehensive donation page with cause selection, amount selection, and payment methods
+- **Donate** (`/donate`) - Comprehensive donation page with three modes (Anonymous/Guest/Registered), amount selection, and payment methods
 - **Blog** (`/blog`) - Blog listing with category filtering and search
 - **Blog Post** (`/blog/[slug]`) - Individual blog post pages
+- **Claim Donation** (`/claim-donation`) - Claim anonymous or guest donations by transaction ID
+- **Login** (`/login`) - User authentication
+- **Signup** (`/signup`) - User registration
+- **Reset Password** (`/reset-password`) - Password reset flow
+
+### Protected Pages (Dashboard)
+- **Dashboard** (`/dashboard`) - Overview with stats and quick actions
+- **Donation History** (`/dashboard/donations`) - View all donations with filters
+- **Payment Methods** (`/dashboard/payment-methods`) - Manage saved payment methods
+- **Recurring Donations** (`/dashboard/recurring`) - Manage subscriptions
+- **Profile** (`/dashboard/profile`) - Edit profile information
 
 ## Getting Started
 
@@ -105,12 +125,21 @@ npm run build
 
 ### Environment Variables
 
-Create a `.env.local` file for local development:
+Create a `.env.local` file for local development. See `.env.example` for all required variables:
 
 ```env
-# Stripe (for donation processing)
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+
+# Stripe
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+
+# App
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
+
+**Important:** For production deployment, set these as GitHub Secrets. See `SETUP.md` for detailed setup instructions.
 
 ### Next.js Config
 
@@ -132,6 +161,31 @@ const nextConfig = {
 2. Create a feature branch
 3. Make your changes
 4. Submit a pull request
+
+## Donation System Documentation
+
+For detailed setup and configuration of the donation system, see [SETUP.md](./SETUP.md).
+
+### Key Features
+
+- **Three Donation Modes:**
+  - **Anonymous**: No personal information collected, transaction ID only
+  - **Guest**: Name and email for receipt, no account required
+  - **Registered**: Full account with donation history and management
+
+- **Payment Processing:**
+  - Stripe Checkout integration
+  - Support for Credit/Debit cards, Google Pay, Apple Pay, PayPal
+  - One-time and recurring donations (weekly, monthly, yearly)
+  - Secure webhook handling via Supabase Edge Functions
+
+- **User Features:**
+  - Complete donation history with filters
+  - Receipt download
+  - Payment method management
+  - Recurring donation management
+  - Claim anonymous/guest donations
+  - Profile management
 
 ## License
 

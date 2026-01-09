@@ -1,22 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { DollarSign, Heart, Repeat, Shield, Info, Gift, EyeOff, CreditCard, Wallet, Landmark, Banknote } from "lucide-react";
+import { useState, useEffect } from "react";
+import { DollarSign, Heart, Repeat, Shield, Info, Gift, EyeOff, CreditCard, Wallet, Landmark, Banknote, User, Mail, Lock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, SUPABASE_ANON_KEY } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
-import { GuestDonationModal } from "@/components/GuestDonationModal";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const presetAmounts = [10, 25, 50, 100, 250, 500];
+const presetAmounts = [25, 50, 100, 250, 500];
 const frequencies = [
   { value: "one-time", label: "One-Time" },
   { value: "weekly", label: "Weekly" },
   { value: "monthly", label: "Monthly" },
+  { value: "yearly", label: "Yearly" },
 ];
 const allocations = [
   { value: "general", label: "Where Most Needed (General Fund)" },
@@ -27,24 +29,58 @@ const allocations = [
   { value: "zakat", label: "Zakat Fund" },
 ];
 
+type DonorType = "anonymous" | "guest" | "registered";
+
 export default function Donate() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const [donorType, setDonorType] = useState<DonorType>(user ? "registered" : "guest");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(50);
   const [customAmount, setCustomAmount] = useState("");
   const [frequency, setFrequency] = useState("one-time");
   const [allocation, setAllocation] = useState("general");
-  const [isAnonymous, setIsAnonymous] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showGuestModal, setShowGuestModal] = useState(false);
+  
+  // Guest donation fields
+  const [guestName, setGuestName] = useState("");
+  const [guestEmail, setGuestEmail] = useState("");
+  
+  // Dedication fields
+  const [dedication, setDedication] = useState({ in_honor_of: "", message: "" });
 
   const amount = customAmount ? Number(customAmount) : selectedAmount;
   const isRecurring = frequency !== "one-time";
 
-  const proceedToCheckout = async () => {
-    if (!amount || amount < 1) {
-      toast.error("Please enter a valid amount");
-      return;
+  // Auto-set donor type based on auth status
+  useEffect(() => {
+    if (user && donorType === "guest") {
+      setDonorType("registered");
+    } else if (!user && donorType === "registered") {
+      setDonorType("guest");
     }
+  }, [user, donorType]);
+
+  const validateForm = (): boolean => {
+    if (!amount || amount < 1) {
+      toast.error("Please enter a valid donation amount");
+      return false;
+    }
+
+    if (donorType === "guest") {
+      if (!guestName.trim()) {
+        toast.error("Please enter your name");
+        return false;
+      }
+      if (!guestEmail.trim() || !guestEmail.includes("@")) {
+        toast.error("Please enter a valid email address");
+        return false;
+    }
+    }
+
+    return true;
+  };
+
+  const proceedToCheckout = async () => {
+    if (!validateForm()) return;
 
     if (!supabase) {
       toast.error("Payment service is not configured. Please contact support.");
@@ -53,14 +89,28 @@ export default function Donate() {
 
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
+      const session = await supabase.auth.getSession();
+      // Always include Authorization header - use session token if available, otherwise anon key
+      const authToken = session.data.session?.access_token || SUPABASE_ANON_KEY;
+      
+      const { data, error } = await supabase.functions.invoke("create-payment-intent", {
         body: {
           amount,
-          isMonthly: isRecurring,
-          frequency,
-          campaignTitle: allocations.find(a => a.value === allocation)?.label || "General Donation",
+          currency: "USD",
+          isRecurring: isRecurring,
+          frequency: frequency,
+          donorType: donorType,
+          guestInfo: donorType === "guest" ? {
+            name: guestName,
+            email: guestEmail,
+          } : undefined,
+          userId: user?.id,
           campaignId: allocation,
-          isAnonymous,
+          campaignTitle: allocations.find(a => a.value === allocation)?.label || "General Donation",
+          dedication: (dedication.in_honor_of || dedication.message) ? dedication : undefined,
+        },
+        headers: {
+          Authorization: `Bearer ${authToken}`,
         },
       });
 
@@ -69,7 +119,11 @@ export default function Donate() {
       }
 
       if (data?.url) {
-        window.open(data.url, "_blank");
+        // Store claim token in sessionStorage for anonymous/guest donations
+        if (data.claim_token) {
+          sessionStorage.setItem("donation_claim_token", data.claim_token);
+        }
+        window.location.href = data.url;
       } else {
         throw new Error("No payment URL received");
       }
@@ -81,27 +135,111 @@ export default function Donate() {
     }
   };
 
-  const handleDonate = () => {
-    if (!user) {
-      setShowGuestModal(true);
-    } else {
-      proceedToCheckout();
-    }
-  };
-
   return (
-    <div className="space-y-8 max-w-lg mx-auto px-4">
+    <div className="space-y-8 max-w-2xl mx-auto px-4 pb-12">
       <div className="text-center space-y-2 pt-6">
-        <h1 className="text-2xl font-bold text-foreground">Make a Donation</h1>
+        <h1 className="text-3xl font-bold text-foreground">Make a Donation</h1>
         <p className="text-muted-foreground">Your generosity transforms lives. Every dollar counts.</p>
           </div>
 
       <Card className="border-border/50">
         <CardContent className="p-6 space-y-6">
+          {/* Donor Type Selection */}
+          {!user && (
+            <div className="space-y-3">
+              <Label className="text-sm font-medium text-foreground">How would you like to donate?</Label>
+              <Tabs value={donorType} onValueChange={(v) => setDonorType(v as DonorType)} className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="anonymous" className="flex items-center gap-2">
+                    <EyeOff className="w-4 h-4" />
+                    Anonymous
+                  </TabsTrigger>
+                  <TabsTrigger value="guest" className="flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    Guest
+                  </TabsTrigger>
+                  <TabsTrigger value="registered" className="flex items-center gap-2">
+                    <Lock className="w-4 h-4" />
+                    Sign In
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="anonymous" className="mt-4 p-4 rounded-xl bg-secondary/30">
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-foreground">Donate Anonymously</p>
+                    <p className="text-xs text-muted-foreground">
+                      No personal information collected. You'll receive a transaction ID to claim your donation later if needed.
+                    </p>
+                  </div>
+                </TabsContent>
+                <TabsContent value="guest" className="mt-4 space-y-4">
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-foreground">Donate as Guest</p>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      Provide name and email for tax receipt. No account required.
+                    </p>
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor="guest-name">Full Name</Label>
+                      <Input
+                        id="guest-name"
+                        placeholder="John Doe"
+                        value={guestName}
+                        onChange={(e) => setGuestName(e.target.value)}
+                        className="h-12 rounded-xl"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="guest-email">Email</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Input
+                          id="guest-email"
+                          type="email"
+                          placeholder="you@example.com"
+                          value={guestEmail}
+                          onChange={(e) => setGuestEmail(e.target.value)}
+                          className="pl-10 h-12 rounded-xl"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+                <TabsContent value="registered" className="mt-4 p-4 rounded-xl bg-primary/5">
+                  <div className="space-y-2 text-center">
+                    <p className="text-sm font-medium text-foreground">Sign in to track your donations</p>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      Access your donation history, manage recurring donations, and more.
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={() => window.location.href = `/login?from=${encodeURIComponent("/donate")}`}
+                      className="w-full rounded-xl"
+                    >
+                      Sign In or Create Account
+                    </Button>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </div>
+          )}
+
+          {user && (
+            <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
+              <div className="flex items-center gap-2">
+                <User className="w-5 h-5 text-primary" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Donating as {user.email}</p>
+                  <p className="text-xs text-muted-foreground">Your donation will be saved to your account</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Frequency Selection */}
           <div className="space-y-3">
             <Label className="text-sm font-medium text-foreground">Giving Frequency</Label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-4 gap-2">
               {frequencies.map((f) => (
                 <Button
                   key={f.value}
@@ -119,7 +257,7 @@ export default function Donate() {
           {/* Amount Selection */}
           <div className="space-y-3">
             <Label className="text-sm font-medium text-foreground">Select Amount</Label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-5 gap-2">
               {presetAmounts.map((amt) => (
                 <Button
                   key={amt}
@@ -135,12 +273,12 @@ export default function Donate() {
             </div>
             <div className="relative">
               <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <input
+              <Input
                         type="number"
                 placeholder="Custom amount"
                 value={customAmount}
                 onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }}
-                className="w-full h-12 pl-12 pr-4 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full h-12 pl-12 pr-4 rounded-xl"
                           />
                         </div>
                       </div>
@@ -160,26 +298,27 @@ export default function Donate() {
             </Select>
           </div>
 
-          {/* Anonymous Toggle */}
-          <div className="flex items-center space-x-3 p-4 rounded-xl bg-secondary/50">
-            <Checkbox 
-              id="anonymous" 
-              checked={isAnonymous}
-              onCheckedChange={(checked) => setIsAnonymous(checked as boolean)}
+          {/* Optional Dedication */}
+          <div className="space-y-3 p-4 rounded-xl bg-secondary/30">
+            <Label className="text-sm font-medium text-foreground">Optional: Make this donation in honor of someone</Label>
+            <Input
+              placeholder="Name (optional)"
+              value={dedication.in_honor_of}
+              onChange={(e) => setDedication({ ...dedication, in_honor_of: e.target.value })}
+              className="h-12 rounded-xl"
             />
-            <div className="flex-1">
-              <Label htmlFor="anonymous" className="text-foreground font-medium cursor-pointer flex items-center gap-2">
-                <EyeOff className="w-4 h-4" />
-                Make this donation anonymous
-              </Label>
-              <p className="text-xs text-muted-foreground">Your name won't appear publicly</p>
-            </div>
+            <Input
+              placeholder="Message (optional)"
+              value={dedication.message}
+              onChange={(e) => setDedication({ ...dedication, message: e.target.value })}
+              className="h-12 rounded-xl"
+            />
           </div>
 
           {/* Donate Button */}
           <Button
-            onClick={handleDonate}
-            disabled={!amount || isLoading}
+            onClick={proceedToCheckout}
+            disabled={!amount || isLoading || authLoading}
             className="w-full h-14 text-lg font-semibold rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground"
           >
             <Heart className="w-5 h-5 mr-2" />
@@ -263,13 +402,6 @@ export default function Donate() {
           </p>
         </CardContent>
       </Card>
-
-      {/* Guest Modal */}
-      <GuestDonationModal
-        open={showGuestModal}
-        onOpenChange={setShowGuestModal}
-        onContinueAsGuest={proceedToCheckout}
-      />
     </div>
   );
 }

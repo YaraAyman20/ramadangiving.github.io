@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { TopNav } from "./TopNav";
 import { BottomNav } from "./BottomNav";
 import { Footer } from "./Footer";
@@ -12,6 +13,8 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const [donationModalOpen, setDonationModalOpen] = useState(false);
+  const pathname = usePathname();
+  const isHomepage = pathname === "/";
 
   return (
     <div className="min-h-screen bg-background transition-theme flex flex-col overflow-x-hidden">
@@ -24,7 +27,9 @@ export function Layout({ children }: LayoutProps) {
       </main>
 
       {/* Footer */}
-      <Footer />
+      <div className={isHomepage ? "" : "mt-10"}>
+        <Footer />
+      </div>
 
       {/* Mobile Bottom Navigation */}
       <BottomNav onDonateClick={() => setDonationModalOpen(true)} />
