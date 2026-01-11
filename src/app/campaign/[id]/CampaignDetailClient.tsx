@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
 
+import { UnifiedDonationForm } from "@/components/donations/UnifiedDonationForm";
+
 interface Campaign {
   id: string;
   title: string;
@@ -36,19 +38,11 @@ const impactMessages: Record<string, string> = {
   "Emergency": "Each $100 delivers emergency supplies to 10 families",
 };
 
-const presetAmounts = [10, 25, 50, 100, 250];
-
 export default function CampaignDetailClient() {
   const { user } = useAuth();
   const params = useParams();
   const id = params.id as string;
   const router = useRouter();
-
-  // Donation state
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(50);
-  const [customAmount, setCustomAmount] = useState("");
-  const [isMonthly, setIsMonthly] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const { data: campaign, isLoading: campaignLoading } = useQuery({
     queryKey: ["campaign", id],
@@ -64,72 +58,6 @@ export default function CampaignDetailClient() {
     },
     enabled: !!id,
   });
-
-  const amount = customAmount ? Number(customAmount) : selectedAmount;
-
-  const handleAmountSelect = (value: number) => {
-    setSelectedAmount(value);
-    setCustomAmount("");
-  };
-
-  const handleCustomAmountChange = (value: string) => {
-    setCustomAmount(value);
-    setSelectedAmount(null);
-  };
-
-  const handleDonate = async () => {
-    if (!campaign || !amount || amount < 1) {
-      toast.error("Please enter a valid donation amount.");
-      return;
-    }
-
-    if (!supabase) {
-      toast.error("Payment service is not configured. Please contact support.");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-
-
-      const session = await supabase.auth.getSession();
-      const authToken = session.data.session?.access_token;
-
-      const { data, error } = await supabase.functions.invoke("create-payment-intent", {
-        body: {
-          amount: amount,
-          currency: "USD",
-          isRecurring: isMonthly,
-          frequency: isMonthly ? "monthly" : "one-time",
-          donorType: user ? "registered" : "guest",
-          guestInfo: user ? {
-            name: user.user_metadata?.full_name || user.email?.split('@')[0] || "Registered User",
-            email: user.email || "",
-          } : undefined,
-          campaignId: campaign.id,
-          campaignTitle: campaign.title,
-        },
-        headers: authToken ? {
-          Authorization: `Bearer ${authToken}`,
-        } : undefined,
-      });
-
-      if (error) {
-        throw new Error(error.message || "Failed to initiate payment");
-      }
-
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error("No payment URL received");
-      }
-    } catch (error: any) {
-      console.error("Checkout error:", error);
-      toast.error(error.message || "Failed to initiate payment. Please try again or contact support.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleShare = async () => {
     if (navigator.share && campaign) {
@@ -184,83 +112,14 @@ export default function CampaignDetailClient() {
   // Donation form component (reused)
   const DonationForm = ({ isSticky = false }: { isSticky?: boolean }) => (
     <Card className={`border-border/50 ${isSticky ? 'sticky top-24' : ''}`}>
-      <CardContent className="p-5 space-y-5">
-        <h3 className="font-semibold text-foreground text-lg">Make a Donation</h3>
-
-        {/* Amount Grid */}
-        <div className="grid grid-cols-5 gap-2">
-          {presetAmounts.map((preset) => (
-            <Button
-              key={preset}
-              variant={selectedAmount === preset ? "default" : "outline"}
-              className={`h-12 text-sm font-semibold rounded-xl ${selectedAmount === preset
-                ? "bg-primary text-primary-foreground"
-                : "border-border hover:border-primary/50"
-                }`}
-              onClick={() => handleAmountSelect(preset)}
-            >
-              ${preset}
-            </Button>
-          ))}
-        </div>
-
-        {/* Custom Amount Input */}
-        <div>
-          <Label className="text-sm text-muted-foreground mb-2 block">
-            Or enter custom amount
-          </Label>
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
-              $
-            </span>
-            <input
-              type="number"
-              placeholder="0"
-              value={customAmount}
-              onChange={(e) => handleCustomAmountChange(e.target.value)}
-              className="w-full h-12 pl-8 pr-4 rounded-xl border border-border bg-background text-foreground text-lg placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200"
-            />
-          </div>
-        </div>
-
-        {/* Monthly Toggle */}
-        <div className="flex items-center justify-between p-4 rounded-xl bg-secondary/50">
-          <div>
-            <Label className="text-foreground font-medium">Make this monthly</Label>
-            <p className="text-xs text-muted-foreground">
-              Recurring donation every month
-            </p>
-          </div>
-          <Switch
-            checked={isMonthly}
-            onCheckedChange={setIsMonthly}
-          />
-        </div>
-
-        {/* Donate Button */}
-        <Button
-          onClick={handleDonate}
-          className="w-full h-14 rounded-xl text-lg font-semibold bg-primary hover:bg-primary-hover text-primary-foreground"
-          disabled={!amount || amount < 1 || isLoading}
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-              Processing...
-            </>
-          ) : (
-            <>
-              <Heart className="w-5 h-5 mr-2" />
-              Donate {amount ? `$${amount}` : "Now"}
-              {isMonthly && amount ? "/mo" : ""}
-            </>
-          )}
-        </Button>
-
-        <p className="text-xs text-center text-muted-foreground">
-          <CreditCard className="w-3 h-3 inline mr-1" />
-          Secure payment powered by Stripe
-        </p>
+      <CardContent className="p-5">
+        <UnifiedDonationForm
+          variant="page"
+          initialCampaignId={campaign.id}
+          initialCampaignTitle={campaign.title}
+          showCauseSelector={false}
+          showImpactCards={false}
+        />
       </CardContent>
     </Card>
   );

@@ -111,7 +111,7 @@ serve(async (req) => {
       campaignTitle,
       dedication,
       isAnonymous, // Legacy support
-      mode = "redirect", // Default to redirect for backward compatibility
+      mode = "embedded", // Default to embedded for unified experience
     } = body;
 
     // Determine actual donor type

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     PaymentElement,
     useStripe,
     useElements,
 } from "@stripe/react-stripe-js";
 import { Button } from "@/components/ui/button";
-import { Loader2, CreditCard, Shield, CheckCircle2 } from "lucide-react";
+import { Loader2, CreditCard, CheckCircle2 } from "lucide-react";
 
 interface EmbeddedCheckoutFormProps {
     amount: number;
@@ -94,7 +94,10 @@ export function EmbeddedCheckoutForm({
                 <PaymentElement
                     options={{
                         layout: "tabs",
-                        paymentMethodOrder: ["card", "apple_pay", "google_pay"],
+                        wallets: {
+                            applePay: 'auto',
+                            googlePay: 'auto'
+                        }
                     }}
                 />
             </div>
@@ -135,12 +138,6 @@ export function EmbeddedCheckoutForm({
             >
                 Cancel
             </Button>
-
-            {/* Security Notice */}
-            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                <Shield className="w-3 h-3" />
-                <span>Secure payment powered by Stripe</span>
-            </div>
         </form>
     );
 }
