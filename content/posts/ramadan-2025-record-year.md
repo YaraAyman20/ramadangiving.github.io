@@ -6,7 +6,7 @@ category: "announcement"
 categoryLabel: "Announcement"
 author: "Ramadan Giving Team"
 date: "2025-12-15"
-featured: true
+featured: false
 ---
 
 ## A Year of Unprecedented Generosity

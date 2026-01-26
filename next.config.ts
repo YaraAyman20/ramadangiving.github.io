@@ -18,8 +18,8 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 
   // Base path for GitHub Pages
-  basePath: isProduction ? `/${repositoryName}` : '',
-  assetPrefix: isProduction ? `/${repositoryName}` : '',
+  // basePath: isProduction ? `/${repositoryName}` : '',
+  // assetPrefix: isProduction ? `/${repositoryName}` : '',
 
   // Turbopack configuration (Next.js 16+)
   turbopack: {},

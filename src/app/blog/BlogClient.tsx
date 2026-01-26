@@ -60,10 +60,10 @@ export default function BlogClient({ initialPosts, postsPerPage }: BlogClientPro
 
   // Get featured post
   const featuredPost = initialPosts.find(post => post.featured) || initialPosts[0];
-  
+
   // Get grid posts (non-featured)
   const gridPosts = filteredPosts.filter(post => !post.featured);
-  
+
   // Pagination
   const totalPages = Math.ceil(gridPosts.length / postsPerPage);
   const startIndex = (currentPage - 1) * postsPerPage;
@@ -91,18 +91,18 @@ export default function BlogClient({ initialPosts, postsPerPage }: BlogClientPro
             <p className="blog-hero-description">
               Stay connected with our community. Read about our programs, events, and the impact we&apos;re making together.
             </p>
-            
+
             {/* Search Bar */}
             <div className="blog-search-wrapper">
               <div className="blog-search">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
-                <input 
-                  type="text" 
-                  id="blogSearch" 
-                  placeholder="Search articles..." 
+                <input
+                  type="text"
+                  id="blogSearch"
+                  placeholder="Search articles..."
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
                 />
@@ -136,12 +136,13 @@ export default function BlogClient({ initialPosts, postsPerPage }: BlogClientPro
             <div className="featured-article">
               <Link href={`/blog/${featuredPost.slug}`} className="featured-link">
                 <div className="featured-image">
-                  <Image 
-                    src={featuredPost.image.replace('../', '/')} 
+                  <Image
+                    src={featuredPost.image.replace('../', '/')}
                     alt={featuredPost.title}
-                    width={800}
-                    height={500}
+                    width={1200}
+                    height={600}
                     priority
+                    style={{ objectFit: 'cover' }}
                   />
                 </div>
                 <div className="featured-content">
@@ -156,7 +157,7 @@ export default function BlogClient({ initialPosts, postsPerPage }: BlogClientPro
                   <span className="featured-read-more">
                     Read Full Article
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                      <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
                   </span>
                 </div>
@@ -170,29 +171,39 @@ export default function BlogClient({ initialPosts, postsPerPage }: BlogClientPro
       <section className="blog-grid-section">
         <div className="container">
           {pagePosts.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '3rem', color: '#666' }}>
-              No posts found matching your criteria.
+            <div className="text-center py-12">
+              <p className="text-muted-foreground text-lg">No posts found matching your criteria.</p>
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setActiveCategory('all');
+                }}
+                className="mt-4 text-primary hover:underline"
+              >
+                Clear filters
+              </button>
             </div>
           ) : (
             <div className="blog-grid" id="blogGrid">
               {pagePosts.map((post, index) => (
-                <article 
-                  key={post.slug} 
-                  className="blog-card" 
+                <article
+                  key={post.slug}
+                  className="blog-card"
                   data-category={post.category}
-                  style={{ 
+                  style={{
                     animation: `fadeInUp 0.5s ease ${index * 0.1}s forwards`,
                     opacity: 0
                   }}
                 >
                   <Link href={`/blog/${post.slug}`} className="blog-card-link">
                     <div className="blog-card-image">
-                      <Image 
-                        src={post.image.replace('../', '/')} 
+                      <Image
+                        src={post.image.replace('../', '/')}
                         alt={post.title}
-                        width={400}
-                        height={250}
+                        width={600}
+                        height={400}
                         loading="lazy"
+                        style={{ objectFit: 'cover' }}
                       />
                     </div>
                     <div className="blog-card-content">
@@ -213,14 +224,14 @@ export default function BlogClient({ initialPosts, postsPerPage }: BlogClientPro
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="blog-pagination">
-              <button 
+              <button
                 className="pagination-arrow prev"
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
                 aria-label="Previous page"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M15 18l-6-6 6-6"/>
+                  <path d="M15 18l-6-6 6-6" />
                 </svg>
               </button>
               <div className="pagination-numbers">
@@ -246,14 +257,14 @@ export default function BlogClient({ initialPosts, postsPerPage }: BlogClientPro
                   );
                 })}
               </div>
-              <button 
+              <button
                 className="pagination-arrow next"
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
                 aria-label="Next page"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 18l6-6-6-6"/>
+                  <path d="M9 18l6-6-6-6" />
                 </svg>
               </button>
             </div>

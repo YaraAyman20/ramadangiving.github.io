@@ -29,6 +29,7 @@ category: "announcement"
 categoryLabel: "Announcement"
 author: "Ramadan Giving Team"
 date: "2025-01-15"
+location: "Toronto, ON"
 featured: false
 ---
 ```
@@ -44,6 +45,7 @@ featured: false
 | `categoryLabel` | Yes | Human-readable category name |
 | `author` | Yes | Author name |
 | `date` | Yes | Publication date (YYYY-MM-DD format) |
+| `location` | No | Location (e.g., "Toronto, ON", "Waterloo, ON"). Defaults to "Toronto, ON" if not provided |
 | `featured` | No | Set `true` for the hero post (only one at a time) |
 
 ### Available Categories

@@ -1,6 +1,19 @@
 {
   "posts": [
     {
+      "id": "6",
+      "slug": "waterloo-winter-outreach-2026",
+      "title": "Volunteers Mobilize on the Coldest Day of the Year to Support Waterloo's Unhoused Neighbours",
+      "excerpt": "On the coldest day of the year, over 60 volunteers distributed 180 hot meals and 250 winter kits to unhoused community members across Waterloo and Kitchener, raising over $2,500.",
+      "content": "waterloo-winter-outreach-2026.html",
+      "image": "/assets/waterloo-winter-outreach-2026.jpg",
+      "category": "community",
+      "categoryLabel": "Community",
+      "author": "Ramadan Giving Team",
+      "date": "2026-01-24",
+      "featured": true
+    },
+    {
       "id": "4",
       "slug": "ramadan-2025-record-year",
       "title": "Ramadan Giving 2025: A Record-Breaking Year of Community Impact",
@@ -11,7 +24,7 @@
       "categoryLabel": "Announcement",
       "author": "Ramadan Giving Team",
       "date": "2025-12-15",
-      "featured": true
+      "featured": false
     },
     {
       "id": "3",
@@ -27,7 +40,7 @@
       "featured": false
     },
     {
-      "id": "6",
+      "id": "7",
       "slug": "winter-kit-distribution-2025",
       "title": "Winter Kits 2025: Warmth for 530 Families",
       "excerpt": "As temperatures drop, our community ensures no family faces the cold alone. See how we distributed 530 winter kits across the GTA.",
