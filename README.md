@@ -42,25 +42,64 @@ A modern, performant website for Ramadan Giving organization built with Next.js 
 
 ## Getting Started
 
-### Prerequisites
+### Quick Start
 
-- Node.js 18+ 
-- npm or yarn
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-### Installation
+2. **Set up environment variables**
+   - Create `.env.local` with your Supabase and Stripe credentials
+   - See [QUICK-START.md](./QUICK-START.md) for details
+
+3. **Set up database**
+   ```bash
+   npm run setup:db
+   ```
+   Follow the instructions to run SQL files in Supabase SQL Editor
+
+4. **Insert campaigns**
+   ```bash
+   npm run insert:campaigns
+   ```
+
+5. **Verify setup**
+   ```bash
+   npm run verify:db
+   ```
+
+6. **Start development server**
+   ```bash
+   npm run dev
+   ```
+
+Visit `http://localhost:3000` to see your site!
+
+### Full Setup Guide
+
+For detailed setup instructions, see:
+- **[QUICK-START.md](./QUICK-START.md)** - Quick setup guide
+- **[SETUP.md](./SETUP.md)** - Complete setup with Stripe and Supabase
+- **[EXTERNAL-CAMPAIGNS-SETUP.md](./EXTERNAL-CAMPAIGNS-SETUP.md)** - Campaign setup
+
+### Available Scripts
 
 ```bash
-# Install dependencies
-npm install
+# Development
+npm run dev              # Start dev server
+npm run build           # Build for production
+npm run start           # Start production server
 
-# Run development server
-npm run dev
+# Database
+npm run setup:db        # Show database setup instructions
+npm run reset:db        # Reset database (guided)
+npm run insert:campaigns # Insert external campaigns
+npm run verify:db       # Verify database setup
 
-# Build for production
-npm run build
-
-# Start production server (for testing)
-npm run start
+# Content
+npm run posts           # Generate blog posts
+npm run new-post        # Create new blog post
 ```
 
 ### Project Structure

@@ -25,6 +25,9 @@ export type Database = {
           is_zakat_eligible: boolean
           raised_amount: number
           title: string
+          external_url: string | null
+          campaign_type: string | null
+          platform: string | null
         }
         Insert: {
           category: string
@@ -36,6 +39,9 @@ export type Database = {
           is_zakat_eligible?: boolean
           raised_amount?: number
           title: string
+          external_url?: string | null
+          campaign_type?: string | null
+          platform?: string | null
         }
         Update: {
           category?: string
@@ -47,6 +53,9 @@ export type Database = {
           is_zakat_eligible?: boolean
           raised_amount?: number
           title?: string
+          external_url?: string | null
+          campaign_type?: string | null
+          platform?: string | null
         }
         Relationships: []
       }

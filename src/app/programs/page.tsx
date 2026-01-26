@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DonationModal } from "@/components/DonationModal";
 import { EventsCalendarDashboard } from "@/components/home/EventsCalendarDashboard";
+import { CampaignImage } from "@/components/campaigns/CampaignImage";
 
 interface Campaign {
   id: string;
@@ -21,6 +22,9 @@ interface Campaign {
   goal_amount: number;
   raised_amount: number;
   is_zakat_eligible: boolean;
+  external_url?: string | null;
+  campaign_type?: string | null;
+  platform?: string | null;
 }
 
 const partners = {
@@ -55,6 +59,11 @@ export default function Programs() {
 
   const handleDonateClick = (e: React.MouseEvent, campaign: Campaign) => {
     e.stopPropagation();
+    // External campaigns don't use the donation modal - they have embedded forms
+    if (campaign.campaign_type === 'external') {
+      router.push(`/campaign/${campaign.id}`);
+      return;
+    }
     setSelectedCampaign(campaign);
     setModalOpen(true);
   };
@@ -109,51 +118,57 @@ export default function Programs() {
         ) : campaigns && campaigns.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {campaigns.map((campaign) => {
-              const progress = (Number(campaign.raised_amount) / Number(campaign.goal_amount)) * 100;
+              const isExternal = campaign.campaign_type === 'external';
+              const progress = campaign.goal_amount > 0 
+                ? (Number(campaign.raised_amount) / Number(campaign.goal_amount)) * 100 
+                : 0;
+              
               return (
                 <Card
                   key={campaign.id}
                   className="border-border/50 card-hover cursor-pointer overflow-hidden"
                   onClick={() => handleCardClick(campaign.id)}
                 >
-                  <div
-                    className="h-32 bg-cover bg-center"
-                    style={{
-                      backgroundImage: campaign.image_url
-                        ? `url(${campaign.image_url})`
-                        : "linear-gradient(135deg, hsl(var(--primary)/0.3) 0%, hsl(var(--accent)/0.3) 100%)",
-                    }}
+                  <CampaignImage
+                    imageUrl={campaign.image_url}
+                    externalUrl={campaign.external_url}
+                    isExternal={isExternal}
+                    className="h-32"
                   />
                   <CardContent className="p-4 space-y-3">
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="font-semibold text-foreground line-clamp-2">{campaign.title}</h3>
-                      {campaign.is_zakat_eligible && (
-                        <Badge variant="secondary" className="text-xs flex-shrink-0 bg-gold/10 text-gold">
-                          Zakat
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="font-semibold text-foreground">
-                          ${Number(campaign.raised_amount).toLocaleString()}
-                        </span>
-                        <span className="text-muted-foreground">
-                          of ${Number(campaign.goal_amount).toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                        <div
-                          className="h-full progress-gold rounded-full"
-                          style={{ width: `${Math.min(progress, 100)}%` }}
-                        />
+                      <div className="flex gap-1 flex-shrink-0">
+                        {isExternal && campaign.platform && (
+                          <Badge variant="outline" className="text-xs">
+                            {campaign.platform === 'gofundme' ? 'GoFundMe' : 'LaunchGood'}
+                          </Badge>
+                        )}
                       </div>
                     </div>
+                    {campaign.goal_amount > 0 && (
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="font-semibold text-foreground">
+                            ${Number(campaign.raised_amount).toLocaleString()}
+                          </span>
+                          <span className="text-muted-foreground">
+                            of ${Number(campaign.goal_amount).toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                          <div
+                            className="h-full progress-gold rounded-full"
+                            style={{ width: `${Math.min(progress, 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
                     <Button
                       onClick={(e) => handleDonateClick(e, campaign)}
                       className="w-full rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground"
                     >
-                      Donate
+                      {isExternal ? 'View Campaign' : 'Donate'}
                     </Button>
                   </CardContent>
                 </Card>

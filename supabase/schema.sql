@@ -71,6 +71,23 @@ CREATE TABLE IF NOT EXISTS public.guest_donors (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
+-- Campaigns table
+CREATE TABLE IF NOT EXISTS public.campaigns (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  category TEXT NOT NULL,
+  image_url TEXT,
+  goal_amount DECIMAL(10, 2) DEFAULT 0,
+  raised_amount DECIMAL(10, 2) DEFAULT 0,
+  is_zakat_eligible BOOLEAN DEFAULT FALSE,
+  external_url TEXT,
+  campaign_type TEXT DEFAULT 'internal' CHECK (campaign_type IN ('internal', 'external')),
+  platform TEXT CHECK (platform IN ('gofundme', 'launchgood', 'internal')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_donations_user_id ON public.donations(user_id);
 CREATE INDEX IF NOT EXISTS idx_donations_status ON public.donations(status);
@@ -79,6 +96,9 @@ CREATE INDEX IF NOT EXISTS idx_donations_stripe_payment_intent_id ON public.dona
 CREATE INDEX IF NOT EXISTS idx_donations_claim_token ON public.donations(claim_token);
 CREATE INDEX IF NOT EXISTS idx_payment_methods_user_id ON public.payment_methods(user_id);
 CREATE INDEX IF NOT EXISTS idx_guest_donors_email ON public.guest_donors(email);
+CREATE INDEX IF NOT EXISTS idx_campaigns_type ON public.campaigns(campaign_type);
+CREATE INDEX IF NOT EXISTS idx_campaigns_platform ON public.campaigns(platform);
+CREATE INDEX IF NOT EXISTS idx_campaigns_category ON public.campaigns(category);
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION public.handle_updated_at()
@@ -110,6 +130,11 @@ CREATE TRIGGER set_updated_at_guest_donors
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_updated_at();
 
+CREATE TRIGGER set_updated_at_campaigns
+  BEFORE UPDATE ON public.campaigns
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_updated_at();
+
 -- Function to automatically create profile on user signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
@@ -137,6 +162,7 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.donations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.payment_methods ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.guest_donors ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.campaigns ENABLE ROW LEVEL SECURITY;
 
 -- Profiles policies
 CREATE POLICY "Users can view their own profile"
@@ -184,8 +210,18 @@ CREATE POLICY "Service role can manage guest donors"
   ON public.guest_donors FOR ALL
   USING (auth.jwt() ->> 'role' = 'service_role');
 
+-- Campaigns policies (public read, authenticated write)
+CREATE POLICY "Anyone can view campaigns"
+  ON public.campaigns FOR SELECT
+  USING (true);
+
+CREATE POLICY "Service role can manage campaigns"
+  ON public.campaigns FOR ALL
+  USING (auth.jwt() ->> 'role' = 'service_role');
+
 -- Grant permissions
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
 GRANT SELECT, INSERT, UPDATE ON public.profiles TO authenticated;
 GRANT SELECT, INSERT, UPDATE ON public.donations TO authenticated, anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.payment_methods TO authenticated;
+GRANT SELECT ON public.campaigns TO anon, authenticated;

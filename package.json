@@ -13,7 +13,11 @@
     "analyze": "ANALYZE=true next build",
     "optimize:images": "node scripts/optimize-images.js",
     "lighthouse": "npx lighthouse https://ramadangiving.github.io --output html --output-path ./lighthouse-report.html",
-    "fix:signup": "node scripts/fix-signup-trigger.js"
+    "fix:signup": "node scripts/fix-signup-trigger.js",
+    "setup:db": "node scripts/setup-db.js",
+    "reset:db": "node scripts/reset-db.js",
+    "insert:campaigns": "node scripts/insert-external-campaigns.js",
+    "verify:db": "node scripts/verify-setup.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
