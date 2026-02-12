@@ -40,7 +40,7 @@ export function HeroSection({ onDonateClick }: HeroSectionProps) {
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6 md:px-12">
         <div className="max-w-4xl space-y-6">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-lg pt-6">
-            Carrying the spirit of Ramadan all year.
+            Ramadan: Carrying the spirit of Ramadan all year.
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto drop-shadow-md">
             A project of Bridging Borders. Serving humanity through hunger relief, education, and emergency aid since 2021.
