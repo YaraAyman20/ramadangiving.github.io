@@ -3,6 +3,7 @@
 import { Heart, Target, Eye, Shield, Users, Award, MapPin, Building2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { CommunityCarousel } from "@/components/home/CommunityCarousel";
 
 const team = [
   { name: "Nora Abdalaal", role: "Founder & Executive Director", initials: "NA", bio: "Nora founded Ramadan Giving in 2021 after witnessing the need in local communities. Her passion for community service and dedication to transparency has shaped our organization's values and growth." },
@@ -207,6 +208,17 @@ export default function About() {
             </div>
           </CardContent>
         </Card>
+      </section>
+      {/* Faces of Our Community */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+          <Users className="w-5 h-5 text-primary" />
+          Faces of Our Community
+        </h2>
+        <p className="text-muted-foreground">
+          Real people making real impact. Meet the dedicated individuals behind Ramadan Giving.
+        </p>
+        <CommunityCarousel />
       </section>
     </div>
   );

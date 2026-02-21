@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -102,11 +102,6 @@ export function EventsCalendarDashboard() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-        <Calendar className="w-5 h-5 text-primary" />
-        Community Calendar
-      </h2>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Calendar View */}
         <Card className="border-border/50">
@@ -145,13 +140,13 @@ export function EventsCalendarDashboard() {
               {Array.from({ length: firstDay }, (_, i) => (
                 <div key={`empty-${i}`} className="w-full aspect-square" />
               ))}
-              
+
               {/* Day cells */}
               {Array.from({ length: daysInMonth }, (_, i) => {
                 const day = i + 1;
                 const dayHasEvent = hasEvent(day);
                 const dayIsSelected = isSelected(day);
-                
+
                 return (
                   <button
                     key={day}
@@ -195,7 +190,7 @@ export function EventsCalendarDashboard() {
               ? `Events on ${selectedDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
               : "Upcoming Events"}
           </h3>
-          
+
           {filteredEvents.length === 0 ? (
             <Card className="border-border/50">
               <CardContent className="p-6 text-center text-muted-foreground">
