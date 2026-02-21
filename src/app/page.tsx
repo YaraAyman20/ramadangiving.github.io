@@ -10,6 +10,7 @@ import { EventsCalendarDashboard } from "@/components/home/EventsCalendarDashboa
 import { PurposeMission } from "@/components/home/PurposeMission";
 import { ImpactCharts } from "@/components/home/ImpactCharts";
 import { GalleryOfEvents } from "@/components/home/GalleryOfEvents";
+import { FeaturedGalaCampaign } from "@/components/home/FeaturedGalaCampaign";
 import { SmartDonationModal } from "@/components/home/SmartDonationModal";
 
 const testimonials = [
@@ -52,6 +53,9 @@ export default function Home() {
           <EventsCalendarDashboard />
         </div>
       </section>
+
+      {/* 2b. Featured Gala Campaign - Building Bridges of Hope (LaunchGood) */}
+      <FeaturedGalaCampaign />
 
       {/* 3. Our Purpose & Mission - Surface bg */}
       <PurposeMission />
