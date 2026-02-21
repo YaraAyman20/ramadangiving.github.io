@@ -13,54 +13,66 @@ interface Event {
   image: string;
 }
 
+// Current/upcoming events for Ramadan 2026 season
 const events: Event[] = [
   {
     id: "1",
-    date: new Date(2025, 0, 15),
+    date: new Date(2026, 1, 22),
     title: "Winter Clothing Drive",
     time: "10:00 AM - 2:00 PM",
-    location: "Community Center",
+    location: "Community Center, Toronto",
     image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=400&q=80"
   },
   {
     id: "2",
-    date: new Date(2025, 0, 22),
-    title: "Food Pantry Distribution",
+    date: new Date(2026, 1, 28),
+    title: "Pre-Ramadan Food Pantry",
     time: "9:00 AM - 1:00 PM",
-    location: "Main Mosque",
+    location: "Main Mosque, Mississauga",
     image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&q=80"
   },
   {
+    id: "gala",
+    date: new Date(2026, 2, 8),
+    title: "Ramadan Giving Fundraising Iftaar",
+    time: "4:00 PM - 9:00 PM",
+    location: "Verdi Convention Centre, Mississauga",
+    image: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400&q=80"
+  },
+  {
     id: "3",
-    date: new Date(2025, 1, 5),
-    title: "Youth Tutoring Session",
-    time: "3:00 PM - 5:00 PM",
-    location: "Public Library",
+    date: new Date(2026, 2, 15),
+    title: "Community Iftar Night",
+    time: "6:00 PM - 9:00 PM",
+    location: "Islamic Center, Toronto",
     image: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=400&q=80"
   },
   {
     id: "4",
-    date: new Date(2025, 1, 14),
-    title: "Senior Care Visit",
-    time: "11:00 AM - 3:00 PM",
-    location: "Sunset Home",
+    date: new Date(2026, 2, 22),
+    title: "Youth Tutoring & Mentorship",
+    time: "3:00 PM - 5:00 PM",
+    location: "Public Library, Brampton",
     image: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400&q=80"
   },
   {
     id: "5",
-    date: new Date(2025, 1, 28),
-    title: "Community Iftar Prep",
-    time: "4:00 PM - 8:00 PM",
-    location: "Islamic Center",
-    image: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400&q=80"
-  }
+    date: new Date(2026, 3, 5),
+    title: "Eid Gift Packing",
+    time: "10:00 AM - 3:00 PM",
+    location: "Community Center, Scarborough",
+    image: "https://images.unsplash.com/photo-1578357078586-491adf1aa5ba?w=400&q=80"
+  },
 ];
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export function EventsCalendarDashboard() {
+  const today = new Date();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [currentMonth, setCurrentMonth] = useState(new Date(2025, 0, 1)); // January 2025
+  const [currentMonth, setCurrentMonth] = useState(
+    new Date(today.getFullYear(), today.getMonth(), 1)
+  );
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
@@ -85,10 +97,15 @@ export function EventsCalendarDashboard() {
     return selectedDate.toDateString() === date.toDateString();
   };
 
+  const isToday = (day: number) => {
+    const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+    return date.toDateString() === today.toDateString();
+  };
+
   const handleDateClick = (day: number) => {
     const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
     if (selectedDate?.toDateString() === date.toDateString()) {
-      setSelectedDate(null); // Toggle off
+      setSelectedDate(null);
     } else {
       setSelectedDate(date);
     }
@@ -96,7 +113,7 @@ export function EventsCalendarDashboard() {
 
   const filteredEvents = selectedDate
     ? events.filter(e => e.date.toDateString() === selectedDate.toDateString())
-    : events.filter(e => e.date >= new Date()); // Show upcoming by default
+    : events.filter(e => e.date >= new Date(today.getFullYear(), today.getMonth(), today.getDate()));
 
   const monthName = currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
@@ -146,6 +163,7 @@ export function EventsCalendarDashboard() {
                 const day = i + 1;
                 const dayHasEvent = hasEvent(day);
                 const dayIsSelected = isSelected(day);
+                const dayIsToday = isToday(day);
 
                 return (
                   <button
@@ -155,9 +173,11 @@ export function EventsCalendarDashboard() {
                       "w-full aspect-square flex flex-col items-center justify-center rounded-lg text-sm transition-colors relative",
                       dayIsSelected
                         ? "bg-[#c0a34e] text-white font-bold"
-                        : dayHasEvent
-                          ? "bg-gold/20 text-gold font-semibold hover:bg-gold/30"
-                          : "text-foreground hover:bg-secondary"
+                        : dayIsToday
+                          ? "ring-2 ring-primary font-bold text-primary"
+                          : dayHasEvent
+                            ? "bg-gold/20 text-gold font-semibold hover:bg-gold/30"
+                            : "text-foreground hover:bg-secondary"
                     )}
                   >
                     {day}
@@ -171,6 +191,10 @@ export function EventsCalendarDashboard() {
 
             {/* Legend */}
             <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded ring-2 ring-primary" />
+                <span>Today</span>
+              </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-gold" />
                 <span>Has Event</span>
@@ -209,7 +233,7 @@ export function EventsCalendarDashboard() {
                     <CardContent className="p-3 flex-1">
                       <p className="font-semibold text-foreground text-sm line-clamp-1">{event.title}</p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {event.date.toLocaleDateString("en-US", { month: "short", day: "numeric" })} • {event.time}
+                        {event.date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })} • {event.time}
                       </p>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
                         <MapPin className="w-3 h-3" />
