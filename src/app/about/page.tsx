@@ -1,15 +1,16 @@
 "use client";
 
-import { Heart, Target, Eye, Shield, Users, Award, MapPin, Building2 } from "lucide-react";
+import { Heart, Target, Eye, Shield, Users, Award, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { CommunityCarousel } from "@/components/home/CommunityCarousel";
 
-const team = [
-  { name: "Nora Abdalaal", role: "Founder & Executive Director", initials: "NA", bio: "Nora founded Ramadan Giving in 2021 after witnessing the need in local communities. Her passion for community service and dedication to transparency has shaped our organization's values and growth." },
-  { name: "Fatima Ali", role: "Operations Director", initials: "FA" },
-  { name: "Omar Khan", role: "Outreach Coordinator", initials: "OK" },
-  { name: "Aisha Rahman", role: "Volunteer Manager", initials: "AR" },
+const values = [
+  { title: "Sincerity", description: "Serving for the sake of goodness, not recognition" },
+  { title: "Dignity First", description: "Honouring every individual with respect and privacy" },
+  { title: "Empathy & Compassion", description: "Responding to real needs with care and understanding" },
+  { title: "Unity & Community", description: "Strong service begins with strong relationships" },
+  { title: "Accountability", description: "Showing up reliably for those who depend on us" },
+  { title: "Striving for Excellence", description: "Giving our best because service deserves care" },
 ];
 
 export default function About() {
@@ -19,27 +20,56 @@ export default function About() {
       <section className="text-center space-y-4 pt-6">
         <h1 className="text-3xl md:text-4xl font-bold text-foreground">About Ramadan Giving</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          A grassroots charity dedicated to serving those in need, rooted in compassion and transparency.
+          A community-led humanitarian initiative addressing socioeconomic inequities locally and globally since 2021.
         </p>
       </section>
 
-      {/* Origin Story */}
+      {/* Who We Are */}
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
           <Heart className="w-5 h-5 text-primary" />
-          Our Story
+          Who We Are
         </h2>
         <Card className="border-border/50">
           <CardContent className="p-6 space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              Ramadan Giving began in 2021 as a small community initiative during the blessed month of Ramadan. What started as a few volunteers distributing meals to the unhoused in Toronto has grown into a movement serving thousands across multiple programs.
+              Ramadan Giving is a community-led humanitarian initiative addressing socioeconomic inequities locally and globally since 2021. Founded during the COVID-19 pandemic, Ramadan Giving began as a grassroots effort to support families experiencing hardship during a time of isolation. What started with delivering non-perishable food packages has grown into a year-round movement rooted in compassion, dignity, and hope.
             </p>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* Who We Serve */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+          <Users className="w-5 h-5 text-primary" />
+          Who We Serve & What We Do
+        </h2>
+        <Card className="border-border/50">
+          <CardContent className="p-6 space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              Our founder, Nora Abdalaal, witnessed firsthand the struggles of families in our community—parents skipping meals so their children could eat, elderly neighbors unable to afford heating in winter. She knew something had to change.
+              We support individuals experiencing homelessness, refugee families, and vulnerable communities across the Greater Toronto Area and internationally, including in Cairo, Egypt. Our programs provide food, clothing, hygiene, educational resources, and relief aid, while fostering connection and hope.
             </p>
-            <p className="text-muted-foreground leading-relaxed">
-              Today, we remain true to our grassroots origins: a volunteer-led organization where every dollar goes directly to those who need it most. In 2025, we became a registered NPO under Bridging Borders.
-            </p>
+            <div className="grid md:grid-cols-2 gap-4 pt-2">
+              <div className="space-y-2">
+                <p className="font-semibold text-foreground text-sm">Core Programs</p>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>🍲 Supporting the Unhoused – Meals, hygiene kits, and personal care initiatives</li>
+                  <li>🎨 Empowering Children & Families – Camps, gift bags, and community resources</li>
+                  <li>🤝 Community Building – Halaqas, potlucks, and local/global engagement events</li>
+                  <li>🌍 International Relief – Support for orphans and families in crisis abroad</li>
+                </ul>
+              </div>
+              <div className="space-y-2">
+                <p className="font-semibold text-foreground text-sm">Impact Highlights</p>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>Thousands of grocery packages and meals to refugee and unhoused communities</li>
+                  <li>Hundreds of hot meals, winter kits, hygiene kits, and toys to families and shelters</li>
+                  <li>Day camps for 100+ refugee, orphaned, and vulnerable children in GTA and Cairo</li>
+                  <li>$517,000+ raised for Gaza relief and humanitarian assistance</li>
+                </ul>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </section>
@@ -53,7 +83,7 @@ export default function About() {
             </div>
             <h3 className="text-lg font-bold text-foreground">Our Mission</h3>
             <p className="text-muted-foreground">
-              To provide immediate relief and sustainable support to vulnerable communities through food security, emergency aid, education assistance, and community empowerment programs.
+              To reduce socioeconomic inequities by empowering underserved communities locally and globally through compassionate, community-driven support rooted in dignity, generosity, and faith-inspired service.
             </p>
           </CardContent>
         </Card>
@@ -64,7 +94,51 @@ export default function About() {
             </div>
             <h3 className="text-lg font-bold text-foreground">Our Vision</h3>
             <p className="text-muted-foreground">
-              A world where no family goes hungry, no child lacks educational resources, and every community has the support it needs to thrive with dignity and hope.
+              Humans supporting humans. We envision communities coming together so everyone, everywhere, can live with dignity, care, compassion, and opportunity.
+            </p>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* Our Values */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-gold" />
+          Our Values
+        </h2>
+        <p className="text-muted-foreground">
+          Our work is guided by faith-inspired service and driven by sincerity, humility, and responsibility.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {values.map((value) => (
+            <Card key={value.title} className="border-border/50">
+              <CardContent className="p-4 flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-gold text-sm font-bold">✓</span>
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground text-sm">{value.title}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{value.description}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Volunteer-Led Model */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+          <Users className="w-5 h-5 text-primary" />
+          A Volunteer-Led, Grassroots Model
+        </h2>
+        <Card className="border-border/50">
+          <CardContent className="p-6 space-y-4">
+            <p className="text-muted-foreground leading-relaxed">
+              Ramadan Giving is powered entirely by volunteers. Our team includes lead directors, committee directors, project managers, and general volunteers who collectively plan, fundraise, and deliver programming. We operate through clearly defined committees covering logistics, case management, fundraising, finance, marketing, web, and public relations—ensuring both impact and accountability.
+            </p>
+            <p className="text-muted-foreground leading-relaxed">
+              This structure allows us to remain flexible, community-responsive, and deeply connected to the people we serve. Our programming is inclusive and serves all people regardless of faith, background, or identity.
             </p>
           </CardContent>
         </Card>
@@ -79,32 +153,32 @@ export default function About() {
         <Card className="border-border/50 border-2 border-gold/30">
           <CardContent className="p-6 space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              We believe donors have the right to know exactly how their contributions are used. That's why we maintain complete transparency in all our operations:
+              Ramadan Giving is committed to trust and transparency. Funds raised through community-led initiatives are carefully tracked and allocated toward direct programming and relief efforts. Our finance and governance processes ensure responsible stewardship of donations, clear reporting, and long-term sustainability.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-gold text-sm font-bold">✓</span>
                 </div>
-                <span className="text-muted-foreground">100% of Zakat donations go directly to eligible recipients</span>
+                <span className="text-muted-foreground">100% of donations support direct programming and relief efforts</span>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-gold text-sm font-bold">✓</span>
                 </div>
-                <span className="text-muted-foreground">Annual financial reports available to all donors</span>
+                <span className="text-muted-foreground">Responsible stewardship with clear reporting and governance processes</span>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-gold text-sm font-bold">✓</span>
                 </div>
-                <span className="text-muted-foreground">Registered NPO under Bridging Borders umbrella</span>
+                <span className="text-muted-foreground">Operates under Bridging Borders, a government-registered non-profit organization</span>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-gold text-sm font-bold">✓</span>
                 </div>
-                <span className="text-muted-foreground">Regular impact reports with photos and testimonials</span>
+                <span className="text-muted-foreground">Regular impact updates with photos and stories from our programs</span>
               </li>
             </ul>
           </CardContent>
@@ -125,11 +199,14 @@ export default function About() {
               </div>
               <div className="space-y-3 text-center md:text-left">
                 <div>
-                  <h3 className="text-lg font-bold text-foreground">{team[0].name}</h3>
-                  <p className="text-sm text-gold font-medium">{team[0].role}</p>
+                  <h3 className="text-lg font-bold text-foreground">Nora Abdalaal</h3>
+                  <p className="text-sm text-gold font-medium">Founder</p>
                 </div>
                 <p className="text-muted-foreground leading-relaxed">
-                  {team[0].bio}
+                  Motivated by a deep commitment to unity and service, Nora Abdalaal founded Ramadan Giving under Bridging Borders with a vision to address systemic inequities through compassionate, community-driven action. Her leadership has brought together hundreds of volunteers and supporters, transforming small acts of care into large-scale impact.
+                </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  Under her guidance, Ramadan Giving has grown from emergency food deliveries into a trusted, year-round organization delivering relief, building partnerships, and uplifting underserved communities locally and internationally.
                 </p>
               </div>
             </div>
@@ -141,74 +218,18 @@ export default function About() {
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
           <Users className="w-5 h-5 text-primary" />
-          Meet the Team
+          Meet Our Team
         </h2>
         <Card className="border-border/50">
           <CardContent className="p-6 space-y-4">
-            <p className="text-muted-foreground">
-              Ramadan Giving is proudly volunteer-led. Our team consists of dedicated community members who donate their time and skills to serve others. We operate on a grassroots model—no excessive overhead, no corporate bureaucracy.
+            <p className="text-muted-foreground leading-relaxed">
+              Ramadan Giving is led by a diverse team of volunteers united by service. From logistics and fundraising, to outreach and storytelling, our team works collaboratively to ensure every initiative is delivered with care and dignity.
             </p>
-            <div className="grid grid-cols-3 gap-4 pt-4">
-              {team.slice(1).map((member) => (
-                <div key={member.name} className="text-center space-y-2">
-                  <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-primary/80 to-accent/80 flex items-center justify-center">
-                    <span className="text-primary-foreground font-bold text-lg">{member.initials}</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-foreground text-sm">{member.name}</p>
-                    <p className="text-xs text-muted-foreground">{member.role}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <p className="text-muted-foreground italic">More to come…</p>
           </CardContent>
         </Card>
       </section>
 
-      {/* Our Locations */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-gold" />
-          Our Locations
-        </h2>
-        <Card className="border-border/50">
-          <CardContent className="p-6 space-y-4">
-            <p className="text-muted-foreground">
-              We serve communities across multiple cities, with our primary operations based in Toronto.
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {["Toronto, ON", "Mississauga, ON", "Brampton, ON", "Scarborough, ON"].map((city) => (
-                <div key={city} className="flex items-center gap-2 p-3 rounded-xl bg-secondary/50">
-                  <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
-                  <span className="text-sm text-foreground">{city}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* Our Partners & Community */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <Building2 className="w-5 h-5 text-primary" />
-          Our Partners & Community
-        </h2>
-        <Card className="border-border/50">
-          <CardContent className="p-6 space-y-4">
-            <p className="text-muted-foreground">
-              We're proud to work alongside these organizations and community partners.
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {["Local Mosques", "Community Centers", "Food Banks", "Schools", "Islamic Centers", "Youth Organizations", "Senior Homes", "Medical Clinics"].map((partner) => (
-                <div key={partner} className="h-20 rounded-xl bg-secondary/50 border border-border/30 flex items-center justify-center p-4">
-                  <span className="text-sm text-foreground font-medium text-center">{partner}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </section>
       {/* Faces of Our Community */}
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-foreground flex items-center gap-2">

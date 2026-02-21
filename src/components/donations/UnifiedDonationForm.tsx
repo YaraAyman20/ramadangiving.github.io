@@ -48,26 +48,26 @@ export interface DonationFormProps {
 // ============================================
 // STATIC DATA
 // ============================================
-const presetAmounts = [25, 50, 100, 250, 500];
+const presetAmounts = [10, 50, 100, 250];
 
 const impactOptions = [
     {
-        amount: 50,
-        impact: "Feeds a family for a week",
+        amount: 10,
+        impact: "1 winter kit or hygiene kit for someone in need",
         icon: Heart,
         color: "from-primary/20 to-primary/5",
         borderColor: "border-primary/30",
     },
     {
-        amount: 100,
-        impact: "Provides Winter Relief Kits",
+        amount: 50,
+        impact: "2 grocery packs for a vulnerable family",
         icon: Package,
         color: "from-gold/20 to-gold/5",
         borderColor: "border-gold/30",
     },
     {
-        amount: 250,
-        impact: "Sponsors a youth program",
+        amount: 100,
+        impact: "10 hot meals for the unhoused",
         icon: Sparkles,
         color: "from-accent/20 to-accent/5",
         borderColor: "border-accent/30",
@@ -75,16 +75,12 @@ const impactOptions = [
 ];
 
 const causeOptions = [
-    { id: "general", title: "Where Most Needed" },
-    { id: "winter-relief", title: "Winter Relief Kits" },
+    { id: "general", title: "Where It's Most Needed" },
+    { id: "winter-relief", title: "Winter Kits for the Unhoused" },
     { id: "grocery-packs", title: "Grocery Packs" },
     { id: "meals-unhoused", title: "Meals for the Unhoused" },
-    { id: "camps-psychosocial", title: "Camps & Psychosocial Support" },
-    { id: "vulnerable-family", title: "Vulnerable Family Support" },
-    { id: "food", title: "Food Distribution" },
-    { id: "education", title: "Education Support" },
-    { id: "medical", title: "Medical Aid" },
-    { id: "zakat", title: "Zakat Fund" },
+    { id: "camps-psychosocial", title: "Camps & Psychosocial Programs" },
+    { id: "vulnerable-family", title: "Vulnerable Families We're Connected To" },
 ];
 
 const frequencies = [
@@ -314,7 +310,7 @@ export function UnifiedDonationForm({
                         A confirmation email has been sent to your inbox.
                     </p>
                     <p className="text-xs text-muted-foreground">
-                        Tax receipt will be sent within 24 hours.
+                        100% of your donation goes directly to supporting our community programs.
                     </p>
                 </div>
                 <Button
@@ -591,7 +587,7 @@ export function UnifiedDonationForm({
 
             {/* Continue Button */}
             <Button
-                onClick={isModal ? handleNext : initiatePayment}
+                onClick={handleNext}
                 disabled={!amount || amount < 1 || isLoading}
                 className="w-full h-14 text-lg font-semibold rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground"
             >
@@ -600,15 +596,10 @@ export function UnifiedDonationForm({
                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                         Processing...
                     </>
-                ) : isModal ? (
+                ) : (
                     <>
                         Next
                         <ChevronRight className="w-5 h-5 ml-2" />
-                    </>
-                ) : (
-                    <>
-                        <CreditCard className="w-5 h-5 mr-2" />
-                        Donate ${amount || 0}
                     </>
                 )}
             </Button>

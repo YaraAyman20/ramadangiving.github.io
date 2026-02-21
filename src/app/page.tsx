@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, Users, Quote, Building2, Instagram } from "lucide-react";
+import { Heart, Users, Quote, Building2, Instagram, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,29 @@ import { ImpactCharts } from "@/components/home/ImpactCharts";
 import { GalleryOfEvents } from "@/components/home/GalleryOfEvents";
 import { FeaturedGalaCampaign } from "@/components/home/FeaturedGalaCampaign";
 import { SmartDonationModal } from "@/components/home/SmartDonationModal";
+
+const homeFaqs = [
+  {
+    question: "How will my donation be used?",
+    answer: "Every donation directly supports programs that provide food, clothing, hygiene products, camp activities, and psychosocial support to underserved communities locally in the GTA and globally.",
+  },
+  {
+    question: "Can I get a tax receipt for my donation?",
+    answer: "No, Ramadan Giving does not provide tax receipts. 100% of donations go directly to funding programs and services.",
+  },
+  {
+    question: "Do you only serve Muslim communities?",
+    answer: "No. Despite the name Ramadan Giving, we serve all communities and faiths. Our mission is to support anyone in need, regardless of religion, background, or identity.",
+  },
+  {
+    question: "How can I volunteer with Ramadan Giving?",
+    answer: "Anyone can volunteer! Check our calendar for upcoming events and sign up using our volunteer form. Visit our Get Involved page to learn more.",
+  },
+  {
+    question: "Who runs Ramadan Giving?",
+    answer: "Ramadan Giving was founded by Nora Abdalaal and operates under Bridging Borders, a government-registered non-profit organization.",
+  },
+];
 
 const testimonials = [
   {
@@ -38,6 +61,7 @@ export default function Home() {
   const router = useRouter();
   const [donationModalOpen, setDonationModalOpen] = useState(false);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
     <div className="space-y-0 overflow-x-hidden">
@@ -206,7 +230,55 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 8. Pre-Footer - Solid Teal */}
+      {/* 8. FAQ Section - Base bg */}
+      <section className="py-16 md:py-20 bg-card px-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <HelpCircle className="w-7 h-7 text-primary" />
+            </div>
+            <h2 className="text-[32px] md:text-[40px] font-bold text-foreground mb-2">
+              Common Questions
+            </h2>
+            <p className="text-muted-foreground">Quick answers to what people ask most</p>
+          </div>
+          <div className="space-y-3">
+            {homeFaqs.map((faq, idx) => (
+              <div
+                key={idx}
+                className="border border-border/50 rounded-xl overflow-hidden bg-background"
+              >
+                <button
+                  className="w-full text-left px-5 py-4 flex items-center justify-between gap-3 hover:bg-secondary/50 transition-colors"
+                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                >
+                  <span className="font-medium text-foreground">{faq.question}</span>
+                  {openFaq === idx
+                    ? <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  }
+                </button>
+                {openFaq === idx && (
+                  <div className="px-5 pb-4 text-muted-foreground leading-relaxed border-t border-border/30 pt-3">
+                    {faq.answer}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Button
+              variant="outline"
+              onClick={() => router.push("/faq")}
+              className="rounded-xl px-8"
+            >
+              View All FAQs
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* 9. Pre-Footer - Solid Teal */}
       <section className="py-16 bg-[#0a4b59] w-screen relative left-1/2 right-1/2 -mx-[50vw]">
         <div className="max-w-4xl mx-auto text-center px-4">
           <h2 className="text-[32px] md:text-[40px] font-bold text-white mb-4">

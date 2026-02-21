@@ -11,72 +11,76 @@ import Link from "next/link";
 
 const faqCategories = [
   {
-    title: "Donations & Giving",
+    title: "Donations",
     icon: Heart,
     items: [
       {
-        question: "How do I make a donation?",
-        answer: "You can donate by clicking the 'Donate' button anywhere on our website. We accept credit cards, Google Pay, Apple Pay, and PayPal. You can also make recurring monthly donations to provide ongoing support.",
+        question: "How will my donation be used?",
+        answer: "Every donation directly supports programs that provide food, clothing, hygiene products, camp activities, and psychosocial support to underserved communities locally in the GTA and globally.",
       },
       {
-        question: "Is my donation tax-deductible?",
-        answer: "Yes! Ramadan Giving operates under Bridging Borders, a registered non-profit organization. You will receive a tax receipt for all eligible donations.",
+        question: "Can I get a tax receipt for my donation?",
+        answer: "No, Ramadan Giving does not provide tax receipts. 100% of donations go directly to funding programs and services.",
       },
       {
-        question: "Can I donate to a specific cause?",
-        answer: "Absolutely! When donating, you can choose from specific causes like Winter Relief Kits, Grocery Packs, Meals for the Unhoused, and more. You can also select 'Where Most Needed' to let us allocate funds where they're needed most.",
+        question: "Do you only serve Muslim communities?",
+        answer: "No. Despite the name Ramadan Giving, we serve all communities and faiths. Our mission is to support anyone in need, regardless of religion, background, or identity.",
       },
       {
-        question: "What is Zakat and which campaigns are Zakat-eligible?",
-        answer: "Zakat is one of the Five Pillars of Islam, requiring Muslims to give a portion of their wealth to those in need. Campaigns marked with 'Zakat Eligible' badges meet the requirements for Zakat distribution.",
+        question: "Can I give in other ways besides money?",
+        answer: "Yes! You can donate goods, services, or even storage space. In-kind contributions help us provide direct support to families and individuals in need. Contact us at givingramadan@gmail.com to discuss.",
       },
       {
         question: "Can I make a recurring donation?",
-        answer: "Yes! You can set up monthly recurring donations to provide consistent support. This helps us plan and deliver programs more effectively.",
+        answer: "Yes! You can set up monthly recurring donations to provide consistent support. This helps us plan and deliver programs more effectively throughout the year.",
+      },
+      {
+        question: "Can I direct my donation to a specific program?",
+        answer: "Absolutely! When donating, you can choose from specific programs like Winter Kits for the Unhoused, Grocery Packs, Meals for the Unhoused, Camps & Psychosocial Programs, and more. You can also select 'Where Most Needed' to let us allocate funds to our highest-priority initiatives.",
       },
     ],
   },
   {
-    title: "Transparency & Accountability",
-    icon: Shield,
-    items: [
-      {
-        question: "How is my donation used?",
-        answer: "100% of your donation goes directly to program delivery. We operate with a 100% volunteer-led model, meaning administrative costs are covered separately, ensuring maximum impact for your generosity.",
-      },
-      {
-        question: "How can I track the impact of my donation?",
-        answer: "We provide regular updates through our blog, social media, and email newsletters. You can see real stories and photos from our programs showing exactly how donations are making a difference.",
-      },
-      {
-        question: "Is Ramadan Giving a registered charity?",
-        answer: "Yes, Ramadan Giving operates as a project under Bridging Borders, a registered Non-Profit Organization (NPO) in Canada.",
-      },
-      {
-        question: "Who oversees Ramadan Giving's operations?",
-        answer: "Our organization is led by dedicated community leaders and overseen by a board of directors who ensure accountability and transparency in all our operations.",
-      },
-    ],
-  },
-  {
-    title: "Volunteering & Getting Involved",
+    title: "Volunteering",
     icon: Users,
     items: [
       {
-        question: "How can I volunteer?",
-        answer: "Visit our 'Get Involved' page to learn about volunteer opportunities. We have roles for event coordination, community outreach, youth ambassadors, and more. Fill out our volunteer form and we'll match you with opportunities.",
+        question: "Who can volunteer with Ramadan Giving?",
+        answer: "Anyone passionate about making a difference—students, families, professionals, or groups—can volunteer with us.",
       },
       {
-        question: "Do I need special skills to volunteer?",
-        answer: "Not at all! We welcome volunteers of all backgrounds and skill levels. Whether you have an hour or many hours to give, there's a place for you in our volunteer family.",
+        question: "How can I volunteer with Ramadan Giving?",
+        answer: "Check our calendar on this website or follow us on social media for upcoming initiatives. Visit our Linktree to see upcoming events and sign up using the associated Google form for the opportunities that interest you. You can also fill out our general event-based volunteer sign-up form at any time.",
       },
       {
-        question: "Can organizations partner with Ramadan Giving?",
-        answer: "Yes! We welcome partnerships with businesses, mosques, schools, and other organizations. Contact us through our 'Get Involved' page to discuss partnership opportunities.",
+        question: "Are there remote volunteer opportunities?",
+        answer: "Yes! You can help with social media, outreach, fundraising, or administrative tasks from anywhere.",
       },
       {
-        question: "How can I host a fundraiser for Ramadan Giving?",
-        answer: "We love community-led fundraising! Contact our team and we'll provide you with resources, materials, and support to run a successful fundraiser in your community.",
+        question: "How do I join the Planning & Core Team?",
+        answer: "Our Planning & Core Team applications are currently closed, but individuals interested are welcome to email us at givingramadan@gmail.com to express their interest. Opportunities may open during the year based on organizational needs.",
+      },
+    ],
+  },
+  {
+    title: "Governance & Impact",
+    icon: Shield,
+    items: [
+      {
+        question: "Who runs Ramadan Giving?",
+        answer: "Ramadan Giving was founded by Nora Abdalaal and is guided by a dedicated group of directors. It operates under Bridging Borders, a government-registered non-profit organization.",
+      },
+      {
+        question: "Is Ramadan Giving a registered charity?",
+        answer: "Ramadan Giving operates as an initiative under Bridging Borders, a government-registered non-profit organization (NPO) in Canada.",
+      },
+      {
+        question: "Can I combine volunteering and donations?",
+        answer: "Absolutely! Giving both your time and financial support creates a deeper, more meaningful impact.",
+      },
+      {
+        question: "How can I learn more about your programs and impact?",
+        answer: "Visit our Programs & Impact page or follow us on social media for updates, stories, and ways to get involved.",
       },
     ],
   },
@@ -110,7 +114,7 @@ export default function Faq() {
                 {category.title}
               </h2>
             </div>
-            
+
             <Accordion type="single" collapsible className="space-y-2">
               {category.items.map((item, itemIndex) => (
                 <AccordionItem

@@ -17,6 +17,7 @@ const navItems = [
   { name: "About", path: "/about" },
   { name: "Get Involved", path: "/get-involved" },
   { name: "Blog & News", path: "/news" },
+  { name: "FAQ", path: "/faq" },
   { name: "Contact Us", path: "/contact" },
 ];
 

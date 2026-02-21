@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { MapPin } from "lucide-react";
+import { MapPin, ExternalLink, Instagram } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 interface Event {
@@ -10,58 +11,110 @@ interface Event {
   title: string;
   time: string;
   location: string;
-  image: string;
+  details: string;
+  signupLink?: string;
+  signupStatus: "open" | "closed" | "coming-soon" | "internal";
+  igLink?: string;
+  isPast?: boolean;
 }
 
-// Current/upcoming events for Ramadan 2026 season
 const events: Event[] = [
+  // Past Events
+  {
+    id: "past-1",
+    date: new Date(2025, 11, 27),
+    title: "Youth Shelter Outreach & Winter Kit Distribution",
+    time: "Saturday, December 27, 2025",
+    location: "Downtown Toronto (exact location shared upon sign-up)",
+    details: "Distribution of winter kits and essential supplies to youth shelters to support individuals facing cold-weather insecurity.",
+    signupStatus: "closed",
+    isPast: true,
+  },
+  {
+    id: "past-2",
+    date: new Date(2026, 0, 4),
+    title: "Ramadan Giving New Year Kickoff Meeting",
+    time: "Sunday, January 4, 2026",
+    location: "Virtual (link shared upon registration)",
+    details: "Team-wide meeting to align on goals, events, and priorities for the year ahead.",
+    signupStatus: "internal",
+    isPast: true,
+  },
+  {
+    id: "past-3",
+    date: new Date(2026, 0, 16),
+    title: "Community Fundraiser at Local Mosque",
+    time: "Thursday, January 16, 2026",
+    location: "Hamilton Mountain Mosque",
+    details: "Community tabling and fundraising to support upcoming winter and Ramadan programming.",
+    signupStatus: "closed",
+    isPast: true,
+  },
+  {
+    id: "past-4",
+    date: new Date(2026, 0, 18),
+    title: "Winter Kits & Hot Meals for the Unhoused (with Keep Hamilton Warm)",
+    time: "Saturday, January 18, 2026",
+    location: "Hamilton",
+    details: "Joint outreach providing winter kits and hot meals to unhoused community members.",
+    signupStatus: "closed",
+    isPast: true,
+  },
+  // Upcoming Events
   {
     id: "1",
-    date: new Date(2026, 1, 22),
-    title: "Winter Clothing Drive",
-    time: "10:00 AM - 2:00 PM",
-    location: "Community Center, Toronto",
-    image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=400&q=80"
+    date: new Date(2026, 0, 24),
+    title: "Hot Meals & Winter Kits – Waterloo Edition (with Rommana Café)",
+    time: "Friday, January 24, 2026",
+    location: "Waterloo",
+    details: "Community-led hot meal service and winter kit distribution in partnership with a local business.",
+    signupLink: "https://linktr.ee/ramadangiving",
+    signupStatus: "open",
   },
   {
     id: "2",
-    date: new Date(2026, 1, 28),
-    title: "Pre-Ramadan Food Pantry",
-    time: "9:00 AM - 1:00 PM",
-    location: "Main Mosque, Mississauga",
-    image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&q=80"
-  },
-  {
-    id: "gala",
-    date: new Date(2026, 2, 8),
-    title: "Ramadan Giving Fundraising Iftaar",
-    time: "4:00 PM - 9:00 PM",
-    location: "Verdi Convention Centre, Mississauga",
-    image: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400&q=80"
+    date: new Date(2026, 1, 16),
+    title: "Wellness Day for Women Affected by Cancer",
+    time: "Sunday, February 16, 2026",
+    location: "Toronto (venue TBD)",
+    details: "A restorative day focused on care, connection, and empowerment for women affected by cancer, featuring workshops and wellness activities.",
+    signupStatus: "coming-soon",
   },
   {
     id: "3",
-    date: new Date(2026, 2, 15),
-    title: "Community Iftar Night",
-    time: "6:00 PM - 9:00 PM",
-    location: "Islamic Center, Toronto",
-    image: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=400&q=80"
+    date: new Date(2026, 1, 22),
+    title: "Community Halaqa, Lunch Bag Distribution & Iftaar",
+    time: "Sunday, February 22, 2026",
+    location: "GTA (location TBD)",
+    details: "Spiritual reflection, community connection, and outreach through lunch bag distribution and shared iftaar.",
+    signupStatus: "coming-soon",
   },
   {
     id: "4",
-    date: new Date(2026, 2, 22),
-    title: "Youth Tutoring & Mentorship",
-    time: "3:00 PM - 5:00 PM",
-    location: "Public Library, Brampton",
-    image: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400&q=80"
+    date: new Date(2026, 2, 8),
+    title: "Family Grocery Distribution, Toy Drive & Community Iftaar",
+    time: "Sunday, March 8, 2026",
+    location: "GTA (location TBD)",
+    details: "Supporting families through grocery packs, children's toys, and a communal iftaar gathering.",
+    signupStatus: "coming-soon",
+  },
+  {
+    id: "gala",
+    date: new Date(2026, 2, 15),
+    title: "Ramadan Giving Annual Fundraising Gala",
+    time: "Sunday, March 15, 2026 – Evening (Maghrib ~7:24 PM)",
+    location: "Venue TBD",
+    details: "Signature fundraising event bringing the community together to support relief and year-round programming.",
+    signupStatus: "coming-soon",
   },
   {
     id: "5",
-    date: new Date(2026, 3, 5),
-    title: "Eid Gift Packing",
-    time: "10:00 AM - 3:00 PM",
-    location: "Community Center, Scarborough",
-    image: "https://images.unsplash.com/photo-1578357078586-491adf1aa5ba?w=400&q=80"
+    date: new Date(2026, 3, 11),
+    title: "RG x SMILE Camp for Children with Disabilities & Pop-Up Store",
+    time: "Saturday, April 11, 2026",
+    location: "Safa and Marwa School, Mississauga",
+    details: "A joyful day camp experience for children with disabilities, including activities, care, and a community pop-up store.",
+    signupStatus: "coming-soon",
   },
 ];
 
@@ -73,6 +126,7 @@ export function EventsCalendarDashboard() {
   const [currentMonth, setCurrentMonth] = useState(
     new Date(today.getFullYear(), today.getMonth(), 1)
   );
+  const [showPast, setShowPast] = useState(false);
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
@@ -111,14 +165,65 @@ export function EventsCalendarDashboard() {
     }
   };
 
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const upcomingEvents = events.filter(e => !e.isPast && e.date >= todayStart);
+  const pastEvents = events.filter(e => e.isPast || e.date < todayStart);
+
   const filteredEvents = selectedDate
     ? events.filter(e => e.date.toDateString() === selectedDate.toDateString())
-    : events.filter(e => e.date >= new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+    : showPast
+      ? pastEvents
+      : upcomingEvents;
 
   const monthName = currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
+  const getSignupButton = (event: Event) => {
+    if (event.signupStatus === "closed") {
+      return <Badge variant="secondary" className="text-xs">Sign Up: CLOSED</Badge>;
+    }
+    if (event.signupStatus === "internal") {
+      return <Badge variant="outline" className="text-xs">Internal Team</Badge>;
+    }
+    if (event.signupStatus === "coming-soon") {
+      return <Badge variant="outline" className="text-xs text-muted-foreground">Sign Up: Coming Soon</Badge>;
+    }
+    if (event.signupLink) {
+      return (
+        <Button
+          size="sm"
+          className="h-7 text-xs rounded-lg bg-gold hover:bg-gold/90 text-gold-foreground"
+          onClick={(e) => { e.stopPropagation(); window.open(event.signupLink, "_blank"); }}
+        >
+          <ExternalLink className="w-3 h-3 mr-1" />
+          Sign Up
+        </Button>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="space-y-6">
+      {/* Toggle past/upcoming */}
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          variant={!showPast ? "default" : "outline"}
+          className="rounded-xl"
+          onClick={() => { setShowPast(false); setSelectedDate(null); }}
+        >
+          Upcoming Events
+        </Button>
+        <Button
+          size="sm"
+          variant={showPast ? "default" : "outline"}
+          className="rounded-xl"
+          onClick={() => { setShowPast(true); setSelectedDate(null); }}
+        >
+          Past Events
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Calendar View */}
         <Card className="border-border/50">
@@ -153,12 +258,10 @@ export function EventsCalendarDashboard() {
 
             {/* Calendar Grid */}
             <div className="grid grid-cols-7 gap-1">
-              {/* Empty cells for days before the 1st */}
               {Array.from({ length: firstDay }, (_, i) => (
                 <div key={`empty-${i}`} className="w-full aspect-square" />
               ))}
 
-              {/* Day cells */}
               {Array.from({ length: daysInMonth }, (_, i) => {
                 const day = i + 1;
                 const dayHasEvent = hasEvent(day);
@@ -212,7 +315,9 @@ export function EventsCalendarDashboard() {
           <h3 className="font-semibold text-foreground">
             {selectedDate
               ? `Events on ${selectedDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
-              : "Upcoming Events"}
+              : showPast
+                ? "Past Events & Programs"
+                : "Upcoming Events & Programs"}
           </h3>
 
           {filteredEvents.length === 0 ? (
@@ -222,36 +327,52 @@ export function EventsCalendarDashboard() {
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+            <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
               {filteredEvents.map(event => (
-                <Card key={event.id} className="border-border/50 overflow-hidden">
-                  <div className="flex">
-                    <div
-                      className="w-24 h-24 bg-cover bg-center flex-shrink-0"
-                      style={{ backgroundImage: `url(${event.image})` }}
-                    />
-                    <CardContent className="p-3 flex-1">
-                      <p className="font-semibold text-foreground text-sm line-clamp-1">{event.title}</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {event.date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })} • {event.time}
-                      </p>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                        <MapPin className="w-3 h-3" />
-                        {event.location}
-                      </div>
-                      <Button
-                        size="sm"
-                        className="mt-2 h-7 text-xs rounded-lg bg-gold hover:bg-gold/90 text-gold-foreground"
-                        onClick={() => window.open("https://www.instagram.com/ramadan.giving", "_blank")}
-                      >
-                        RSVP
-                      </Button>
-                    </CardContent>
-                  </div>
+                <Card key={event.id} className={cn("border-border/50 overflow-hidden", event.isPast && "opacity-75")}>
+                  <CardContent className="p-4 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="font-semibold text-foreground text-sm leading-snug">{event.title}</p>
+                      {event.isPast && <Badge variant="secondary" className="text-xs flex-shrink-0">Past</Badge>}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {event.date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" })}
+                    </p>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <MapPin className="w-3 h-3 flex-shrink-0" />
+                      {event.location}
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{event.details}</p>
+                    <div className="flex items-center gap-2 pt-1 flex-wrap">
+                      {getSignupButton(event)}
+                      {event.igLink && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 text-xs rounded-lg"
+                          onClick={() => window.open(event.igLink, "_blank")}
+                        >
+                          <Instagram className="w-3 h-3 mr-1" />
+                          View Post
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
                 </Card>
               ))}
             </div>
           )}
+
+          <p className="text-xs text-muted-foreground text-center">
+            Follow{" "}
+            <button
+              className="text-primary underline"
+              onClick={() => window.open("https://www.instagram.com/ramadan.giving", "_blank")}
+            >
+              @ramadan.giving
+            </button>
+            {" "}on Instagram for event updates and sign-up links.
+          </p>
         </div>
       </div>
     </div>
