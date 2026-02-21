@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { Heart, Users, Building2, TrendingUp, Droplets, BookOpen, Sparkles, ArrowRight, Clock, MapPin, FileText } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +9,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { DonationModal } from "@/components/DonationModal";
 import { CampaignImage } from "@/components/campaigns/CampaignImage";
 
 const GALA_IMAGE = "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800&q=80";
@@ -78,8 +76,6 @@ const programs = [
 
 export default function Programs() {
   const router = useRouter();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
 
   const { data: campaigns, isLoading } = useQuery({
     queryKey: ["campaigns"],
@@ -93,14 +89,9 @@ export default function Programs() {
     },
   });
 
-  const handleDonateClick = (e: React.MouseEvent, campaign: Campaign) => {
+  const handleDonateClick = (e: React.MouseEvent, campaignId: string) => {
     e.stopPropagation();
-    if (campaign.campaign_type === 'external') {
-      router.push(`/campaign/${campaign.id}`);
-      return;
-    }
-    setSelectedCampaign(campaign);
-    setModalOpen(true);
+    router.push(`/campaign/${campaignId}`);
   };
 
   const handleCardClick = (campaignId: string) => {
@@ -257,7 +248,7 @@ export default function Programs() {
                       </div>
                     )}
                     <Button
-                      onClick={(e) => handleDonateClick(e, campaign)}
+                      onClick={(e) => handleDonateClick(e, campaign.id)}
                       className="w-full rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground"
                     >
                       {isExternal ? 'View Campaign' : 'Donate'}
@@ -309,7 +300,7 @@ export default function Programs() {
                   <Button
                     size="sm"
                     className="rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground text-xs h-8"
-                    onClick={() => router.push("/donate")}
+                    onClick={() => router.push("/programs")}
                   >
                     <Heart className="w-3 h-3 mr-1" />
                     Donate
@@ -371,12 +362,6 @@ export default function Programs() {
         </Card>
       </section>
 
-      {/* Donation Modal */}
-      <DonationModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        campaign={selectedCampaign}
-      />
     </div>
   );
 }

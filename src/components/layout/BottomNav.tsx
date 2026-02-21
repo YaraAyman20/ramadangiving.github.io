@@ -15,11 +15,7 @@ const rightNavItems = [
   { name: "Involve", path: "/get-involved", icon: Users },
 ];
 
-interface BottomNavProps {
-  onDonateClick: () => void;
-}
-
-export function BottomNav({ onDonateClick }: BottomNavProps) {
+export function BottomNav() {
   const pathname = usePathname();
 
   const renderNavItem = (item: typeof navItems[0]) => {
@@ -65,10 +61,10 @@ export function BottomNav({ onDonateClick }: BottomNavProps) {
         {/* Left side items */}
         {navItems.map(renderNavItem)}
 
-        {/* Center Floating Donate Button */}
+        {/* Center Floating Donate Button - Links to Programs */}
         <li className="relative -mt-6">
-          <button
-            onClick={onDonateClick}
+          <Link
+            href="/programs"
             className="flex flex-col items-center justify-center"
           >
             <div className="w-14 h-14 rounded-full bg-gold shadow-lg shadow-gold/30 flex items-center justify-center transition-transform duration-200 active:scale-95 hover:bg-gold/90">
@@ -77,7 +73,7 @@ export function BottomNav({ onDonateClick }: BottomNavProps) {
             <span className="text-[9px] font-semibold text-gold mt-0.5">
               Donate
             </span>
-          </button>
+          </Link>
         </li>
 
         {/* Right side items */}

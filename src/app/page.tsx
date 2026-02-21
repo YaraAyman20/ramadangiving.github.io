@@ -11,7 +11,6 @@ import { PurposeMission } from "@/components/home/PurposeMission";
 import { ImpactCharts } from "@/components/home/ImpactCharts";
 import { GalleryOfEvents } from "@/components/home/GalleryOfEvents";
 import { FeaturedGalaCampaign } from "@/components/home/FeaturedGalaCampaign";
-import { SmartDonationModal } from "@/components/home/SmartDonationModal";
 
 const homeFaqs = [
   {
@@ -59,14 +58,13 @@ const testimonials = [
 
 export default function Home() {
   const router = useRouter();
-  const [donationModalOpen, setDonationModalOpen] = useState(false);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
     <div className="space-y-0 overflow-x-hidden">
       {/* 1. Hero Section - Split View */}
-      <HeroSection onDonateClick={() => setDonationModalOpen(true)} />
+      <HeroSection onDonateClick={() => router.push("/programs")} />
 
       {/* 2. Community Calendar - Base bg */}
       <section className="py-16 md:py-20 bg-card px-4">
@@ -290,7 +288,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              onClick={() => setDonationModalOpen(true)}
+              onClick={() => router.push("/programs")}
               className="bg-gold hover:bg-gold/90 text-gold-foreground font-semibold rounded-xl h-12 px-8 shadow-lg transition-all duration-300 hover:scale-105"
             >
               <Heart className="w-4 h-4 mr-2" />
@@ -307,11 +305,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <SmartDonationModal
-        open={donationModalOpen}
-        onOpenChange={setDonationModalOpen}
-      />
     </div>
   );
 }

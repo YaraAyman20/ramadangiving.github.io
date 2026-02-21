@@ -21,11 +21,7 @@ const navItems = [
   { name: "Contact Us", path: "/contact" },
 ];
 
-interface TopNavProps {
-  onDonateClick: () => void;
-}
-
-export function TopNav({ onDonateClick }: TopNavProps) {
+export function TopNav() {
   const { theme, toggleTheme } = useTheme();
   const { user, loading } = useAuth();
   const pathname = usePathname();
@@ -120,14 +116,15 @@ export function TopNav({ onDonateClick }: TopNavProps) {
             <span className="text-[10px] font-medium text-foreground">Switch Theme</span>
           </Button>
 
-          {/* Donate Button - Always Visible (Tightened) */}
-          <Button
-            onClick={onDonateClick}
-            className="h-9 px-3 md:px-4 rounded-xl font-semibold bg-gold hover:bg-gold/90 text-gold-foreground shadow-lg shadow-gold/20 transition-all duration-200"
-          >
-            <Heart className="w-4 h-4 mr-1" />
-            <span className="text-sm">Donate</span>
-          </Button>
+          {/* Donate Button - Links to Programs */}
+          <Link href="/programs">
+            <Button
+              className="h-9 px-3 md:px-4 rounded-xl font-semibold bg-gold hover:bg-gold/90 text-gold-foreground shadow-lg shadow-gold/20 transition-all duration-200"
+            >
+              <Heart className="w-4 h-4 mr-1" />
+              <span className="text-sm">Donate</span>
+            </Button>
+          </Link>
 
           {/* User Avatar / Sign In - Desktop (Far right) */}
           {!loading && (
