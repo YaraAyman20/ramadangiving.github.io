@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, Phone, MapPin, Clock, ExternalLink, MessageCircle, HelpCircle, Instagram, Linkedin } from "lucide-react";
+import { Mail, MapPin, Clock, ExternalLink, MessageCircle, HelpCircle, Instagram, Linkedin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,19 +12,23 @@ import {
 
 const faqs = [
   {
-    category: "Donations & Tax Receipts",
+    category: "Donations",
     questions: [
       {
-        q: "Is my donation tax-deductible?",
-        a: "Yes! Ramadan Giving operates under Bridging Borders, a registered 501(c)(3) nonprofit organization. You will receive a tax receipt for all donations over $25 automatically via email."
+        q: "Can I get a tax receipt for my donation?",
+        a: "No, Ramadan Giving does not provide tax receipts. 100% of donations go directly to funding programs and services."
       },
       {
-        q: "How is my donation used?",
-        a: "100% of Zakat-designated funds go directly to eligible recipients. For general donations, at least 90% goes to programs, with minimal overhead for essential operations."
+        q: "How will my donation be used?",
+        a: "Every donation directly supports programs that provide food, clothing, hygiene products, camp activities, and psychosocial support to underserved communities locally in the GTA and globally."
       },
       {
-        q: "Can I donate monthly?",
-        a: "Absolutely! Monthly giving helps us plan long-term programs. You can set up recurring donations on our Donate page and manage your subscription anytime."
+        q: "Can I give in other ways besides money?",
+        a: "Yes! You can donate goods, services, or even storage space. In-kind contributions help us provide direct support to families and individuals in need. Contact us at givingramadan@gmail.com to discuss."
+      },
+      {
+        q: "Can I make a recurring donation?",
+        a: "Yes! You can set up monthly recurring donations to provide consistent support. This helps us plan and deliver programs more effectively throughout the year."
       }
     ]
   },
@@ -32,42 +36,33 @@ const faqs = [
     category: "Volunteering",
     questions: [
       {
-        q: "What is the time commitment for volunteers?",
-        a: "It varies! Event volunteers typically commit 3-4 hours per event. Regular volunteers may help weekly or monthly. We work with your schedule."
+        q: "Who can volunteer with Ramadan Giving?",
+        a: "Anyone passionate about making a difference—students, families, professionals, or groups—can volunteer with us."
       },
       {
-        q: "Do I need special skills to volunteer?",
-        a: "No special skills required for most roles. We need help with packing, distribution, driving, and general event support. Training is provided."
+        q: "How can I volunteer?",
+        a: "Check our calendar on this website or follow us on social media for upcoming initiatives. You can also sign up as an event-based volunteer using our volunteer form on the Get Involved page."
       },
       {
-        q: "Can students volunteer for community service hours?",
-        a: "Yes! We provide documentation for community service hours. Please mention this in your volunteer application."
+        q: "Are there remote volunteer opportunities?",
+        a: "Yes! You can help with social media, outreach, fundraising, or administrative tasks from anywhere."
       }
     ]
   },
   {
-    category: "Faith & Values",
+    category: "Governance & Impact",
     questions: [
       {
-        q: "Is this a religious organization?",
-        a: "Ramadan Giving is inspired by Islamic principles of charity and compassion, but we serve ALL people regardless of faith, background, or identity."
+        q: "Do you only serve Muslim communities?",
+        a: "No. Despite the name Ramadan Giving, we serve all communities and faiths. Our mission is to support anyone in need, regardless of religion, background, or identity."
       },
       {
-        q: "How do you handle Zakat distribution?",
-        a: "Zakat funds are distributed according to Islamic guidelines to the eight categories of eligible recipients. We maintain strict oversight to ensure compliance."
-      }
-    ]
-  },
-  {
-    category: "Transparency",
-    questions: [
-      {
-        q: "How can I see where my donation went?",
-        a: "We publish quarterly impact reports and annual financial statements. Donors also receive periodic updates on specific programs they supported."
+        q: "Who runs Ramadan Giving?",
+        a: "Ramadan Giving was founded by Nora Abdalaal and is guided by a dedicated group of directors. It operates under Bridging Borders, a government-registered non-profit organization."
       },
       {
-        q: "Are you a legitimate organization?",
-        a: "Yes. We are a project of Bridging Borders, a registered 501(c)(3) nonprofit. Our EIN is available upon request, and we maintain full financial transparency."
+        q: "How can I learn more about your programs and impact?",
+        a: "Visit our Programs & Impact page or follow us on social media for updates, stories, and ways to get involved."
       }
     ]
   }
@@ -104,16 +99,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Email</p>
-                  <p className="font-medium text-foreground">info@ramadangiving.org</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Phone className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Phone</p>
-                  <p className="font-medium text-foreground">(555) 123-4567</p>
+                  <p className="font-medium text-foreground">givingramadan@gmail.com</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -154,7 +140,7 @@ export default function Contact() {
             <div className="pt-2">
               <p className="text-sm text-muted-foreground flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
-                Serving communities nationwide
+                Serving communities across Canada & internationally
               </p>
             </div>
           </CardContent>
@@ -200,7 +186,7 @@ export default function Contact() {
             </p>
             <Button 
               className="rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground"
-              onClick={() => window.location.href = "mailto:info@ramadangiving.org"}
+              onClick={() => window.location.href = "mailto:givingramadan@gmail.com"}
             >
               <Mail className="w-4 h-4 mr-2" />
               Email Us

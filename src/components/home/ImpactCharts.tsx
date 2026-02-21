@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
     BarChart,
     Bar,
@@ -17,17 +16,17 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 
 const barData = [
-    { name: "Meals Served", value: 25000, fill: "#0a4b59" },
-    { name: "Lunch Bags", value: 5000, fill: "#c0a34e" },
-    { name: "Families Helped", value: 3500, fill: "#0a4b59" },
-    { name: "Students Supported", value: 1200, fill: "#c0a34e" },
+    { name: "Meals & Lunch Bags", value: 2449, fill: "#0a4b59" },
+    { name: "Food Packs", value: 2104, fill: "#c0a34e" },
+    { name: "Children Supported", value: 335, fill: "#0a4b59" },
+    { name: "Orphans (Intl)", value: 161, fill: "#c0a34e" },
 ];
 
 const pieData = [
-    { name: "Hunger Relief", value: 45, color: "#0a4b59" },
-    { name: "Community Support", value: 25, color: "#c0a34e" },
-    { name: "Emergency Aid", value: 20, color: "#1a6b7a" },
-    { name: "Education", value: 10, color: "#d4b85c" },
+    { name: "Food & Meals", value: 40, color: "#0a4b59" },
+    { name: "Community Programs", value: 30, color: "#c0a34e" },
+    { name: "International Relief", value: 20, color: "#1a6b7a" },
+    { name: "Events & Outreach", value: 10, color: "#d4b85c" },
 ];
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -72,7 +71,7 @@ export function ImpactCharts() {
                                         <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                                         <XAxis
                                             dataKey="name"
-                                            tick={{ fontSize: 12 }}
+                                            tick={{ fontSize: 11 }}
                                             className="fill-muted-foreground"
                                         />
                                         <YAxis
@@ -135,8 +134,8 @@ export function ImpactCharts() {
                 {/* Summary Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                     {[
-                        { value: "$320,000+", label: "Total Raised" },
-                        { value: "5,000+", label: "Lunch Bags" },
+                        { value: "$517,000+", label: "Total Raised" },
+                        { value: "2,449+", label: "Meals & Lunch Bags" },
                         { value: "100%", label: "Volunteer Led" },
                         { value: "Registered", label: "Non-Profit (NPO)" },
                     ].map((stat) => (
